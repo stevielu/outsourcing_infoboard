@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+
+.amap-marker-label{
+  border: 0;
+  background-color: transparent;
+  padding: 0;
+  transform:rotate(0deg) !important;
+}
+.size-modal-4K-lagre .ant-modal-content{
+  margin-top: 20px;
+  transform: scale(1.5);
+}
+.size-message-4K-lagre .ant-message-notice-content{
+  transform: scale(1.5);
+}

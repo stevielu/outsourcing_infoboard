@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="170px" height="200px" viewBox="0 0 170 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>#45 避险车道 </title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="画板" transform="translate(-120.000000, -3420.000000)">
+            <g id="#45-避险车道-" transform="translate(120.000000, 3420.000000)">
+                <rect id="矩形" fill="#FCEE00" x="0" y="0" width="170" height="200"></rect>
+                <rect id="矩形" stroke="#323215" stroke-width="3" fill="#FCEE00" x="5.5" y="6.5" width="159" height="188"></rect>
+                <path d="M52.6620942,40 C82.0651215,63.9052601 99.6460362,99.8822902 99.9947142,138.819197 L100,140 L82.9402924,140 C82.9402924,106.268327 68.0015405,75.0474361 42.7678051,54.1537607 L42,53.5237882 L52.6620942,40 Z" id="路径" fill="#000000" fill-rule="nonzero"></path>
+                <rect id="矩形" fill="#000000" x="85" y="50" width="9" height="54"></rect>
+                <g id="编组" transform="translate(80.000000, 30.000000)">
+                    <rect id="矩形" fill="#DC5A31" x="0" y="0" width="18" height="35"></rect>
+                    <rect id="矩形" fill="#613502" x="7" y="0" width="6" height="6"></rect>
+                    <rect id="矩形备份-6" fill="#613502" x="7" y="29" width="6" height="6"></rect>
+                    <rect id="矩形备份-7" fill="#613502" x="0" y="7" width="6" height="5"></rect>
+                    <rect id="矩形备份-8" fill="#613502" x="0" y="16" width="6" height="5"></rect>
+                    <rect id="矩形备份-9" fill="#613502" x="0" y="23" width="6" height="5"></rect>
+                    <rect id="矩形备份-7" fill="#613502" x="12" y="7" width="6" height="5"></rect>
+                    <rect id="矩形备份-8" fill="#613502" x="12" y="16" width="6" height="5"></rect>
+                    <rect id="矩形备份-7" fill="#613502" x="7" y="20" width="6" height="5"></rect>
+                    <rect id="矩形备份-8" fill="#613502" x="7" y="10" width="6" height="5"></rect>
+                    <rect id="矩形备份-9" fill="#613502" x="12" y="23" width="6" height="5"></rect>
+                </g>
+                <text id="避险车道" font-family="PingFangSC-Semibold, PingFang SC" font-size="29" font-weight="500" line-spacing="41" letter-spacing="1.624" fill="#333333">
+                    <tspan x="24.252" y="175">避险车道</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>

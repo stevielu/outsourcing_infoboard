@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="27px" viewBox="0 0 20 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>编组 12</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <radialGradient cx="50%" cy="0%" fx="50%" fy="0%" r="114.424885%" gradientTransform="translate(0.500000,0.000000),scale(0.200000,1.000000),rotate(60.919274),translate(-0.500000,-0.000000)" id="radialGradient-1">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#A6A6A6" offset="100%"></stop>
+        </radialGradient>
+        <linearGradient x1="0%" y1="52.0361328%" x2="100%" y2="52.0361328%" id="linearGradient-2">
+            <stop stop-color="#A6A5A5" offset="0%"></stop>
+            <stop stop-color="#E2E2E2" offset="48.8037109%"></stop>
+            <stop stop-color="#807D7D" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="段视角页面" transform="translate(-1979.000000, -1312.000000)">
+            <g id="编组-12" transform="translate(1979.000000, 1312.000000)">
+                <ellipse id="椭圆形" fill="url(#radialGradient-1)" cx="10" cy="25" rx="10" ry="2"></ellipse>
+                <path d="M8,0.5 L12,0.5 L12,25 C11.3333333,25.2600098 10.6666667,25.3900146 10,25.3900146 C9.33333333,25.3900146 8.66666667,25.2600098 8,25 L8,0.5 Z" id="矩形" fill="url(#linearGradient-2)"></path>
+            </g>
+        </g>
+    </g>
+</svg>
