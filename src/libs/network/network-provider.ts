@@ -43,6 +43,11 @@ class Network implements NetworkApi {
 
 
         let content = object.data.data
+        if(!object.data.data){
+          Object.assign(content,{data:object.data})
+        }else{
+          content = object.data.data
+        }
         if(content && !Object.keys(content).includes('url')){//给每个接口数据添加加密后url的属性
           if(typeof content === 'object' && object.config.url){
             Object.assign(content,{url:Md5.hashStr(object.config.url).toString()})

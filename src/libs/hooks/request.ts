@@ -1,7 +1,7 @@
 /*
 Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
-import {useState,DependencyList} from 'react';
+import {useState,useEffect,DependencyList} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 
@@ -26,6 +26,55 @@ async function awaitWrap<T, U = any>(promise: Promise<T>): Promise<[U | null, T 
 
 const store = () => {
 
+}
+
+
+export const usePolly = <T>(
+  apiService:ApiServiceType<T>,
+  next:(res:T)=>Promise<void>,
+  interval:number,
+  parameters?:any,
+  deps?: DependencyList,
+  complete?:RequestCallback
+) =>{
+  const [data,setData] = useState<UnwarpPromise<ReturnType<typeof apiService>>>()
+  const [loading,setLoading] = useState(true)
+
+  /*数据*/
+  const exec = ()=>{
+    return apiService(parameters).then(res =>{
+      if(res){
+        if(complete){
+          complete(res,null)
+        }
+        setData(res)
+      }
+
+      setLoading(false)
+      next(res)
+    })
+  }
+  let time:any
+  const request = async () => {
+    const fn = () => {
+      time = setTimeout(()=>{
+        console.log(time)
+        exec().then(_ => fn())
+      },interval)
+    }
+    fn()
+  }
+
+  useEffect(()=>{
+    exec().then(_ =>{
+      request()
+    })
+    return ()=>{
+      console.log('clearing...',time)
+      clearTimeout(time)
+    }
+  },[deps])
+  return {request,data,loading}
 }
 
 export const useRequest =   <T>(

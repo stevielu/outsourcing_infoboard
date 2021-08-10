@@ -7,14 +7,12 @@ import * as RSUApi from './rsu'
 import * as BSMApi from './bsm'
 import * as V2XApi from './scene'
 import WeatherApi from './weather'
-import TaskApi from './task'
 import * as Base from '../model/response'
 const networkFactory = new NetworkFactory()
 const net = networkFactory.makeNetwork()
 
 
 export const weather = WeatherApi(net)
-export const Task = TaskApi(net)
 
 export const rsu =  {
   spat:RSUApi.Spat(networkFactory.makeWebSocket('spat')),
