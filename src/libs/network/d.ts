@@ -4,8 +4,8 @@ Copyright (c) 2020 by Stevie. All Rights Reserved.
 import NetworkPromise from './middware'
 export interface BasicResponse<T> {
   msg?:string;
-  code:number;
-  data:T;
+  code?:number;
+  data?:T;
 }
 export default interface NetworkApi{
   postItem<T>(path:string,params?:any):NetworkPromise<T>;
