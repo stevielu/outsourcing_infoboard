@@ -21,72 +21,79 @@ class Network implements NetworkApi {
     this.domain = rootPath
   }
 
-  private handleRsponse<T>(object:AxiosResponse<BasicResponse<T>>) {
-      if(object.data){
-        if(object.data.code){
-          //custom code
-          switch(object.data.code){
-            case 500:
-              const errObj = new Error(object.data.msg)
-              throw errObj
-            case 1002:
-              const error = {code:object.data.code.toString(),message:'证书错误'}
+  private handleRsponse<T>(object:AxiosResponse<BasicResponse<T>>|AxiosResponse<T>) {
+    const formattedData = object as AxiosResponse<BasicResponse<T>>
+    const originData = object as AxiosResponse<T>
+    if(formattedData.data.code){
+      const obj = formattedData.data
+      if(obj.code){
+        //custom code
+        switch(obj.code){
+          case 500:
+            const errObj = new Error(obj.msg)
+            throw errObj
+          case 1002:
+            const error = {code:obj.code.toString(),message:'证书错误'}
+            throw error
+          default:
+            if(obj && obj.code && obj.code != 200){
+              const error = {code:obj.code.toString(),message:obj.msg}
               throw error
-            default:
-              if(object.data && object.data.code && object.data.code != 200){
-                const error = {code:object.data.code.toString(),message:object.data.msg}
-                throw error
-              }
-              break
-          }
+            }
+            break
         }
+      }
 
-
-        let content = object.data.data
+      if(obj.data){
+        let content = obj.data
         if(content && !Object.keys(content).includes('url')){//给每个接口数据添加加密后url的属性
           if(typeof content === 'object' && object.config.url){
             Object.assign(content,{url:Md5.hashStr(object.config.url).toString()})
           }
         }
-
         return content
       }
-      else{//parase error
-        throw new Error("parase error,response was null")
-      }
+    }
+
+    return originData.data
   }
 
   private handleError<T>(error:AxiosError<T>){
+    let isHandled = false
       //http code
       switch(error.code){
         case '500':
           Message.errorAlert(error.message)
+          isHandled = true
           break
         case '401':
           this._authRedirect('证书失效，请重新登录')
+          isHandled = true
           break
         case '403':
           Message.errorAlert('对不起，您的权限不足')
           //this._authRedirect(error.message)
+          isHandled = true
           break
         case '1001':
           this._authRedirect(error.message)
+          isHandled = true
           break
         case '1002':
           this._authRedirect(error.message)
+          isHandled = true
           break
         case '1003':
           this._authRedirect(error.message)
+          isHandled = true
           break
         case '1004':
           this._authRedirect(error.message)
-          break
-        default:
-          Message.errorAlert(error.message)
+          isHandled = true
           break
       }
 
-
+      return isHandled
   }
 
   private _authRedirect(msg:string){
@@ -102,13 +109,14 @@ class Network implements NetworkApi {
 
   public get<T>(path:string,params?:object){
     const response = new NetworkPromise<T>((reslove,reject)=>{
-      AxiosClient.get<BasicResponse<T>>(path,params)
+      AxiosClient.get<T>(path,params)
       .then(res => {
-        reslove(this.handleRsponse(res))
+        reslove(this.handleRsponse<T>(res))
       })
       .catch(err => {
-        this.handleError(err)
-        reject(new Error(`${path}:${err.message}`))
+        if(this.handleError(err) === false){
+          reject(new Error(`${path}:${err.message}`))
+        }
       })
     })
 
@@ -119,11 +127,12 @@ class Network implements NetworkApi {
     const response = new NetworkPromise<T>((reslove,reject)=>{
       AxiosClient.post<BasicResponse<T>>(path,params)
       .then(res => {
-        reslove(this.handleRsponse(res))
+        reslove(this.handleRsponse<T>(res))
       })
       .catch(err => {
-        this.handleError(err)
-        reject(new Error(`${path}:${err.message}`))
+        if(this.handleError(err) === false){
+          reject(new Error(`${path}:${err.message}`))
+        }
       })
     })
 
@@ -137,11 +146,10 @@ class Network implements NetworkApi {
 
   //获取单个数据
   public getItem<T>(path: string, params?: any){
-    return this.post<T>(this.domain + path,params)
+    return this.get<T>(this.domain + path,params)
   }
 
-  //获取分页数据
-  //@pageSize 单次请求返回数据量
+
   public getItems<T>(path:string,params?:any,pageSize?:number){
     let data = {...params}
     if(pageSize){
@@ -225,7 +233,7 @@ class Network implements NetworkApi {
         }
         makeDownloadResopnse(response)
       }
-    ).catch(err => this.handleError(err))
+    ).catch(err => {this.handleError(err)})
   }
 
   //定时轮询
