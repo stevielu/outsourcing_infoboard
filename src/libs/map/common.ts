@@ -63,11 +63,11 @@ export type ThreeDimension = {
   gltf?:string,
   obj?:string,
   mtl?:string,
-  rotate:number,
+  rotate?:number,
   option:{
     position:Coordinates2D;
-    scale:number;
-    height:number;
+    scale?:number;
+    height?:number;
     scene?:number;
   }
 }

@@ -4,7 +4,7 @@ Copyright (c) 2020 by Stevie. All Rights Reserved.
 
 import React,{ FunctionComponent,useEffect,useState,useCallback} from 'react'
 import {Coordinates2D,WMSProtocol,ThreeDimension,MapType} from '../common'
-import MapInterface from '../map-core'
+import MapInterface,{MapOption} from '../map-core'
 import GeoCoder from '../map-geocoder'
 import {MapVectorGraph} from '../map-vectoroverlay'
 import MapFactory from '../map-factory'
@@ -26,11 +26,15 @@ type MapProps = {
   map?:MapInterface;
   mapKey?:string;
   zoom?:number;
+  rotation?:number;
+  rotateEnable?:boolean;
   position?:Coordinates2D;
   initialPostion?:Coordinates2D;
   addEventListener?:MapEvent|MapEvent[];
   wmsLayer?:{tileUrl:string;config:WMSProtocol|WMSProtocol[]};
   model?:ModelOption[]//3d模型
+  viewMode?:string;
+  version?:string;
 }
 
 const Toast = Logger('map')
@@ -42,11 +46,11 @@ export interface MapChildrenProps{
 
 
 
-export const useMap = (type:MapType,mapInstance?:MapInterface)=>{
+export const useMap = (type:MapType,mapInstance?:MapInterface,option?:MapProps)=>{
   const [mapView] = useState<MapInterface>(()=>{
     if(!mapInstance){
       const factory = new MapFactory(type)
-      const newMap = factory.makeMapProvider()
+      const newMap = factory.makeMapProvider(option)
       return newMap
     }
     return mapInstance
@@ -78,8 +82,10 @@ export const Map:FunctionComponent<MapProps> = (props) => {
     if(mapWraper && mapView){
       mapView.createInstance(
         mapWraper,
-        props.initialPostion,
-        props.zoom,
+        {
+          center:props.initialPostion,
+          ...props
+        }
       ).then((loadState) => {
         // Toast.successAlert(`地图加载完成`)
         setLoadMapState(loadState)
@@ -90,7 +96,13 @@ export const Map:FunctionComponent<MapProps> = (props) => {
 
   },[])
 
-
+  useEffect(()=>{
+    if(props.rotation && mapView){
+      mapView.onload().then(map =>{
+        mapView.setRotation(props.rotation)
+      })
+    }
+  },[props.rotation])
 
   useEffect(()=>{
     if(props.position && loadMapState == true && mapView){
@@ -114,6 +126,7 @@ export const Map:FunctionComponent<MapProps> = (props) => {
 
   useEffect(()=>{
     if(props.wmsLayer){
+        console.log('add layyer')
         const layer = props.wmsLayer
         mapView.onload().then(map =>{
           mapView.addTileLayer(layer.tileUrl,layer.config)

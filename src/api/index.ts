@@ -6,6 +6,7 @@ import NetworkFactory from '../libs/network/network-factory'
 import * as RSUApi from './rsu'
 import * as BSMApi from './bsm'
 import * as V2XApi from './scene'
+import GeoApi from './geo'
 import WeatherApi from './weather'
 import * as Base from '../model/response'
 const networkFactory = new NetworkFactory()
@@ -13,7 +14,7 @@ const net = networkFactory.makeNetwork()
 
 
 export const weather = WeatherApi(net)
-
+export const geo = GeoApi(net)
 export const rsu =  {
   spat:RSUApi.Spat(networkFactory.makeWebSocket('spat')),
   crossing:RSUApi.CorssingInfo(net)

@@ -48,8 +48,8 @@ export default class NetworkFactory{
     }
   }
 
-  public makeWebSocket(namespace?:string){
-     return new WebSocket({socketUrl:this.domain.socket,timeout:5000,namespace:namespace})
+  public makeWebSocket(namespace?:string,onError?:(e:any)=>void){
+     return new WebSocket({socketUrl:this.domain.socket,timeout:5000,namespace:namespace,socketError:onError})
   }
 
 }

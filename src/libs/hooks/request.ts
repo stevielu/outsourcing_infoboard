@@ -2,7 +2,7 @@
 Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
 import {useState,useEffect,DependencyList} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 
 
@@ -35,14 +35,16 @@ export const usePolly = <T>(
   interval:number,
   parameters?:any,
   deps?: DependencyList,
-  complete?:RequestCallback
+  complete?:RequestCallback,
+  onError?:RequestCallback,
+  continueWhenFail?:boolean
 ) =>{
   const [data,setData] = useState<UnwarpPromise<ReturnType<typeof apiService>>>()
   const [loading,setLoading] = useState(true)
 
   /*数据*/
-  const exec = ()=>{
-    return apiService(parameters).then(res =>{
+  const exec = (params?:Object)=>{
+    return apiService(params?params:parameters).then(res =>{
       if(res){
         if(complete){
           complete(res,null)
@@ -52,29 +54,39 @@ export const usePolly = <T>(
 
       setLoading(false)
       next(res)
+    }).catch(err => {
+      onError && onError(null,err)
     })
   }
-  let time:any
-  const request = async () => {
+  let timmer:ReturnType<typeof setTimeout>|null = null
+  const request = async (params?:Object) => {
     const fn = () => {
-      time = setTimeout(()=>{
-        console.log(time)
-        exec().then(_ => fn())
+      timmer = setTimeout(()=>{
+        exec(params).then(_ => fn())
       },interval)
     }
     fn()
   }
 
+  const stop = () => {
+    if(timmer){
+      clearTimeout(timmer)
+    }
+  }
+
   useEffect(()=>{
     exec().then(_ =>{
       request()
+    }).catch(_ =>{
+      if(continueWhenFail === true){
+        request()
+      }
     })
     return ()=>{
-      console.log('clearing...',time)
-      clearTimeout(time)
+      stop()
     }
   },[deps])
-  return {request,data,loading}
+  return {stop,request,data,loading}
 }
 
 export const useRequest =   <T>(

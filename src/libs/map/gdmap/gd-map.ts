@@ -3,7 +3,7 @@ Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
 
 import AMapLoader from '@amap/amap-jsapi-loader'
-import MapInterface from '../map-core'
+import MapInterface,{MapOption} from '../map-core'
 import Marker from '../map-marker'
 import CanvasLayer from '../map-canvaslayer'
 import MapUtils from '../map-utils'
@@ -17,7 +17,7 @@ export const DEFAULT_CONFIG = {
   hostAndPath: 'webapi.amap.com/maps',
   key: 'f97efc35164149d0c0f299e7a8adb3d2',
   callback:'',
-  mapStyle:'amap://styles/3a61129d9fbb9775e840de222e6ffcb8'
+  mapStyle:''
 }
 
 
@@ -27,7 +27,7 @@ class GDMap implements MapInterface {
   token: string = DEFAULT_CONFIG.key;
   config:object;
   protocol:string;
-  options?:object;//初始化参数，zoom，plugin，center，layer etc
+  options?:MapOption;//初始化参数，zoom，plugin，center，layer etc
   loadPromise:Promise<any>
 
   loadState:boolean = false
@@ -42,10 +42,10 @@ class GDMap implements MapInterface {
   private _3Dlayer:{[name:string]:any} = {}
   private _3DObject:{[name:string]:any} = {}
 
-  constructor(mapKey:string,ver?:string,options?:{}){
+  constructor(mapKey:string,options?:MapOption){
     this.token = mapKey
-    if(ver){
-       this.version = ver
+    if(options && options.version){
+       this.version = options.version
     }
 
 
@@ -86,21 +86,27 @@ class GDMap implements MapInterface {
     }
     return AMapLoader.load({
         "key": this.token,
-        "version": this.version,//缺省时默认为 1.4.15
-        "plugins": this.options ? Object.values(this.options):['AMap.MoveAnimation','AMap.Geocoder','AMap.CustomLayer',heatMapPlug,'AMap.GltfLoader','AMap.Walking','AMap.Driving']  //插件列表
+        "version": this.version,//缺省时默认为2.0
+        "plugins": this.options?.plugins ? this.options.plugins:['AMap.MoveAnimation','AMap.Geocoder','AMap.CustomLayer',heatMapPlug,'AMap.GltfLoader','AMap.Walking','AMap.Driving','AMap.Map3D','AMap.3DTilesLayer']  //插件列表
     })
   }
 
   // 创建单个地图实例，随组件一起销毁
-  public createInstance = (wrapper:HTMLDivElement,center?:Coordinates2D,zoom?:number,id?:string) => {
+  public createInstance = (
+    wrapper:HTMLDivElement,
+    options?:MapOption,
+    id?:string
+  ) => {
     if(this.loadPromise){
         const p = this.loadPromise
           .then((map) => {
             const AMapLib = map.originInstance
             this._amap = new AMapLib.Map(wrapper,{
-              center:center && [center.longitude,center.lattitude],
-              zoom:zoom ? zoom:ZoomValue.Large,
+              viewMode: options?.viewMode && options.viewMode,
+              center:options?.center && [options.center.longitude,options.center.lattitude],
+              zoom:options?.zoom ? options.zoom:ZoomValue.Large,
               mapStyle:DEFAULT_CONFIG.mapStyle,
+              rotateEnable:options?.rotateEnable ? options.rotateEnable:false
             });
             this.map.originMapObject = this._amap
             this.loadState = true
@@ -183,8 +189,12 @@ class GDMap implements MapInterface {
   //设置旋转地图
   public setRotation = (degree?:number) => {
     if(degree != undefined){
-      this._amap.setRotation(degree,false,0)
+      this._amap.setRotation(degree)
     }
+  }
+
+  public getRotation = () => {
+    return this._amap.getRotation()
   }
 
   public addCanvasLayer = (canvas:HTMLCanvasElement,drawer?:()=>void) =>{
@@ -471,12 +481,7 @@ class GDMap implements MapInterface {
     const tiles = new AMap['3DTilesLayer']({
         map: map,
         url: options.tileUrl, // 3d Tiles 入口文件
-        style: {
-            light: {
-                color: 'rgb(44,59,75)', // 设置光照颜色
-                intensity: 2, // 设置光照强度
-            }
-        }
+
     });
   }
 
