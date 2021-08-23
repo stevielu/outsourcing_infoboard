@@ -30,7 +30,7 @@ class Network implements NetworkApi {
         //custom code
         switch(obj.code){
           case 500:
-            const errObj = new Error(obj.msg)
+            const errObj = {code:obj.code.toString(),message:obj.msg}
             throw errObj
           case 1002:
             const error = {code:obj.code.toString(),message:'证书错误'}

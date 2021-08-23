@@ -1,7 +1,7 @@
 /*
 Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
-import {useState,DependencyList} from 'react';
+import {useState,useRef,useMemo,useEffect,DependencyList} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 
@@ -26,6 +26,69 @@ async function awaitWrap<T, U = any>(promise: Promise<T>): Promise<[U | null, T 
 
 const store = () => {
 
+}
+
+
+export const usePolly = <T>(
+  apiService:ApiServiceType<T>,
+  next:(res:T)=>Promise<void>,
+  interval:number,
+  parameters?:any,
+  deps?: DependencyList,
+  complete?:RequestCallback,
+  onError?:RequestCallback,
+  continueWhenFail?:boolean
+) =>{
+  const [data,setData] = useState<UnwarpPromise<ReturnType<typeof apiService>>>()
+  const [loading,setLoading] = useState(true)
+
+  /*数据*/
+  const exec = (params?:Object)=>{
+    setLoading(true)
+    return apiService(params?params:parameters).then(res =>{
+      if(res){
+        if(complete){
+          complete(res,null)
+        }
+        setData(res)
+      }
+
+      setLoading(false)
+      next(res)
+    }).catch(err => {
+      setLoading(false)
+      onError && onError(null,err)
+    })
+  }
+  let timmer:ReturnType<typeof setTimeout>|null = null
+  const request = async (params?:Object) => {
+    const fn = () => {
+      timmer = setTimeout(()=>{
+        exec(params).then(_ => fn())
+      },interval)
+    }
+    fn()
+  }
+
+  const stop = () => {
+    if(timmer){
+      clearTimeout(timmer)
+    }
+  }
+
+  useEffect(()=>{
+    exec().then(_ =>{
+      request()
+    }).catch(_ =>{
+      if(continueWhenFail === true){
+        request()
+      }
+    })
+    return ()=>{
+      stop()
+    }
+  },[deps])
+  return {stop,request,data,loading}
 }
 
 export const useRequest =   <T>(

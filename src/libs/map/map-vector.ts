@@ -33,6 +33,9 @@ export interface Shape {
   setPath:(path:[Coordinates2D]) => void
   show: () => void;
   hide: () => void;
+  remove:() => boolean;
+  addEvent:(event:string,callback:(map:MapInterface,shapeObj:Shape|PolyLine|Polygon)=>void) => void;
+  removeEvent:(event:string) => void;
 }
 
 export interface PolyLine extends Shape{
@@ -64,10 +67,10 @@ export class MapVectorGraph{
 
     switch (mapView.type) {
       case MapType.Gaode:
-          this.vectorgraph = new GDShape(mapView)
+          this.vectorgraph = new GDShape(mapInstance)
         break
       default:
-          this.vectorgraph = new GDShape(mapView)
+          this.vectorgraph = new GDShape(mapInstance)
         break
     }
 
@@ -79,8 +82,9 @@ export class MapVectorGraph{
       ...style,
       lineStyle:LineStyle.Dashed
     }
-    this.vectorgraph.createPolyline(path,style)
+    const solid = this.vectorgraph.createPolyline(path,style)
     customStyle.color = dashColor
-    this.vectorgraph.createPolyline(path,customStyle)
+    const dashed = this.vectorgraph.createPolyline(path,customStyle)
+    return [solid,dashed]
   }
 }

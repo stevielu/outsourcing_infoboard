@@ -7,16 +7,29 @@ import MarkerInterface from './map-marker'
 import CanvasLayer from './map-canvaslayer'
 import MapUtils from './map-utils'
 
-
+export type MapOption = {
+  center?:Coordinates2D,
+  zoom?:number,
+  rotation?:number,
+  rotateEnable?:boolean,
+  viewMode?:string,
+  version?:string,
+  plugins?:string[]
+}
 interface MapInterface{
   map:MapInstance;
   token:string | number;
   loadState:boolean;
-  createInstance: (wrapper:HTMLDivElement,center?:Coordinates2D,zoom?:number,id?:string) => Promise<boolean>;
+  createInstance: (
+    wrapper:HTMLDivElement,
+    options?:MapOption,
+    id?:string
+  ) => Promise<boolean>;
   center?:Coordinates2D;
   onload:() => Promise<MapInstance>;
   moveTo:(position:Coordinates2D) => void;
   setRotation:(degree?:number) => void;
+  getRotation:()=>number;
   addMarker:(marker:MarkerInterface) => void;
   getMarkers:(id:string) => MarkerInterface|undefined;
   removeMarker:(marker:MarkerInterface) => void;

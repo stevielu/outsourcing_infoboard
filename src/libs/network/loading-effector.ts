@@ -9,7 +9,15 @@ export default class Effector{
   }
 
   static finished(contents?:string){
-    Message.hideLoading()
+    if(contents){
+      Message.successAlert(contents)
+    }else{
+      Message.hideLoading()
+    }
+  }
+
+  static error(contents?:string){
+    Message.errorAlert(contents?contents:'Fail')
   }
 
 }

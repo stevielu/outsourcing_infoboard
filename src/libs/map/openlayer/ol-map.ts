@@ -68,13 +68,17 @@ class OLMap implements MapInterface {
 
 
   // 创建单个地图实例，随组件一起销毁
-  public createInstance = (wrapper:HTMLDivElement,center?:Coordinates2D,zoom?:number,id?:string) => {
+  public createInstance = (
+    wrapper:HTMLDivElement,
+    options?:{center?:Coordinates2D,zoom?:number,rotation?:number},
+    id?:string
+  ) => {
 
     return new Promise<boolean>((reslove,reject) => {
       const olmap = new Map({
           view: new View({
-            center: center ? transform([center.longitude,center.lattitude],'EPSG:4326','EPSG:3857'):[0, 0],
-            zoom: zoom?zoom:16,
+            center: options?.center ? transform([options.center.longitude,options.center.lattitude],'EPSG:4326','EPSG:3857'):[0, 0],
+            zoom: options?.zoom?options.zoom:16,
           }),
           layers: [
             new TileLayer({
@@ -98,7 +102,7 @@ class OLMap implements MapInterface {
         })
 
         olmap.on('singleclick',(event) => {
-          console.log(event.coordinate);
+          console.log(transform(event.coordinate, 'EPSG:3857', 'EPSG:4326'));
         })
         reslove(true)
       }else{
@@ -116,13 +120,12 @@ class OLMap implements MapInterface {
   // 地图图块加载完成后触发
   public onload = () => {
     return new Promise<MapInstance>((resolve) =>{
-      this._olMap?.once('rendercomplete',(event) => {
-        resolve(this.map)
-      })
       this._onRenderComplete(()=>{
+        console.log('loaded map',this._olMap)
         if(this._olMap){
           this._olMap.updateSize()
         }
+        resolve(this.map)
       })
     })
   }
@@ -150,6 +153,10 @@ class OLMap implements MapInterface {
   //设置旋转地图
   public setRotation = (degree?:number) => {
 
+  }
+
+  public getRotation = () => {
+    return 0;
   }
 
   public addCanvasLayer = (canvas:HTMLCanvasElement,drawer?:()=>void) =>{

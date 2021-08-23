@@ -38,7 +38,7 @@ class EasyWebSocket {
   }
 
     public connection = (path?:string) => {
-        return new Promise((resolve,reject)=>{
+        return new Promise<{event:Event,socket:WebSocket}>((resolve,reject)=>{
           if(!path){
             return reject(`connection error ${this.param.namespace} , request url was invalid.`);
           }
@@ -46,17 +46,13 @@ class EasyWebSocket {
 
 
           this.socket[path] = new WebSocket(this.param.socketUrl+path);
-
-          this.socket[path].onopen = (e) => {
-            this.onopen()
-            resolve({event:e,socket:this})
-          };
-
-
-
           this.socket[path].onclose = this.onclose;
           this.socket[path].onerror = this.onerror;
 
+          this.socket[path].onopen = (e) => {
+            this.onopen()
+            resolve({socket:this.socket[path],event:e})
+          };
 
           // 检测返回的状态码 如果socket.readyState不等于1则连接失败，关闭连接
           if(this.param.timeout) {

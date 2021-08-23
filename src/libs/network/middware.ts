@@ -14,12 +14,12 @@ export default class NetworkPromise<T> extends Promise<T>{
   private _reject?: (<TResult = never>(reason: any) => TResult | PromiseLike<TResult>) | undefined | null
   public pollingTaskId:number = 0
   constructor(
-    executor:(resolve:(value:T) => void, reject:(reason:any) => void) => void
+      executor:(resolve:(value:T) => void, reject:(reason:any) => void) => void
   )
   {
 
     super((resolve:(value:T)=>void, reject:(reason:any)=>void) => {
-          return executor(resolve, reject);
+      return executor(resolve, reject);
     });
 
   }
@@ -30,12 +30,12 @@ export default class NetworkPromise<T> extends Promise<T>{
   }
 
   error = <TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null) => {
-     super.catch(onrejected)
-     return this
+    super.catch(onrejected)
+    return this
   }
 
   //加载效果
-  loading = (beforeFn?:(value:boolean)=>void,afterFn?:(value:boolean)=>void) => {
+  loading = (beforeFn?:(value:boolean)=>void,afterFn?:(value:boolean)=>void,msg?:{success:string,fail:string}) => {
     if(beforeFn){
       beforeFn(this._completed)
     }else{
@@ -46,9 +46,10 @@ export default class NetworkPromise<T> extends Promise<T>{
       if(afterFn){
         afterFn(this._completed)
       }else{
-        LoadingEffector.finished()
+        LoadingEffector.finished(msg && msg.success)
       }
     }).catch(err => {
+      LoadingEffector.error((msg && msg.fail))
       return err
     })
 
@@ -181,7 +182,7 @@ export default class NetworkPromise<T> extends Promise<T>{
         const time = res[1]
         if(Array.isArray(res[0])){
           res[0].map(key => {
-              Object.assign(value,{[key]:timeFormatter.timeStamp2String(time)})
+            Object.assign(value,{[key]:timeFormatter.timeStamp2String(time)})
           })
         }else{
           Object.assign(value,{[res[0]]:timeFormatter.timeStamp2String(time)})
