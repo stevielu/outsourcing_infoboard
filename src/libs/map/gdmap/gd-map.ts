@@ -8,7 +8,7 @@ import Marker from '../map-marker'
 import CanvasLayer from '../map-canvaslayer'
 import MapUtils from '../map-utils'
 import {MapInstance} from '../map-object'
-import {MapType,Coordinates2D,OverlayZindex,ZoomValue,HeatMapData,WMSProtocol,ThreeDimension} from '../common'
+import {MapType,Coordinates2D,OverlayZindex,ZoomValue,HeatMapData,WMSProtocol,WMTSProtocol,CustomTile,ThreeDimension} from '../common'
 import Logger from '../../../utils/logger'
 import UUID from '../../../utils/uuid'
 
@@ -237,34 +237,96 @@ class GDMap implements MapInterface {
     }
   };
 
-  public addTileLayer = (tileUrl:string,params:WMSProtocol|WMSProtocol[],zIndex?:number) => {
-    if(this.map){
-      const AMap = this.map.originInstance
-      if(Array.isArray(params)){
-        params.forEach(item => {
-          const layer  = new AMap.TileLayer.WMS({
-            url: tileUrl, // wms服务的url地址
-            blend: false, // 地图级别切换时，不同级别的图片是否进行混合
-            zooms:[0,20],
-            tileSize:256,
-            params: item // OGC标准的WMS地图服务的GetMap接口的参数
-          })
-          layer.setMap(this._amap)
-          layer.show()
-        })
-      }else{
-        const wms  = new AMap.TileLayer.WMS({
-          url: tileUrl, // wms服务的url地址
+  private _makeTile = (url:string,params:WMSProtocol|WMTSProtocol|CustomTile) =>{
+    const AMap = this.map.originInstance
+    const type = params.TYPE
+    let layer:any = null
+    delete params.TYPE
+
+    switch(type){
+      case 'WMTS':
+        layer = new AMap.TileLayer.WMTS({
+          url: url, // wmts服务的url地址
           blend: false, // 地图级别切换时，不同级别的图片是否进行混合
           zooms:[0,20],
           tileSize:256,
           params: params // OGC标准的WMS地图服务的GetMap接口的参数
         })
-        wms.setMap(this._amap)
-        wms.show()
-      }
+      break;
+      case 'WMS':
+        layer = new AMap.TileLayer.WMS({
+          url: url, // wms服务的url地址
+          blend: false, // 地图级别切换时，不同级别的图片是否进行混合
+          zooms:[0,20],
+          tileSize:256,
+          params: params // OGC标准的WMS地图服务的GetMap接口的参数
+        })
+      break;
+      case 'Custome':
+      console.log(url)
+      const val = params as CustomTile
+        layer = new AMap.TileLayer({
+          zIndex: 1,
+          tileUrl:`${url}?layer=${val.LAYER}&TileMatrix=EPSG:3857:[z]&TileMatrixSet=EPSG:3857&Request=GetTile&Service=WMTS&Format=image/png&TileRow=[y]&TileCol=[x]`,
+        })
+      break;
+      default:
+      console.log('invalid tiles')
+      break;
+    }
+    if(layer){
+      layer.setMap(this._amap)
+      layer.show()
+    }
   }
-}
+
+
+  public addTileLayer = (tileUrl:string,params:WMSProtocol|WMSProtocol[]|WMTSProtocol|WMTSProtocol[],zIndex?:number) => {
+    if(this.map){
+      if(Array.isArray(params)){
+        params.forEach((item:WMSProtocol|WMTSProtocol) => {
+          this._makeTile(tileUrl,item)
+        })
+      }else{
+        this._makeTile(tileUrl,params)
+      }
+    }
+  }
+
+//   public addTileLayer = (tileUrl:string,params:WMSProtocol|WMSProtocol[],zIndex?:number) => {
+//     if(this.map){
+//       const AMap = this.map.originInstance
+//       if(Array.isArray(params)){
+//         params.forEach(item => {
+//
+//
+//           const layer  = new AMap.TileLayer.WMS({
+//             url: tileUrl, // wms服务的url地址
+//             blend: false, // 地图级别切换时，不同级别的图片是否进行混合
+//             zooms:[0,20],
+//             tileSize:256,
+//             params: item // OGC标准的WMS地图服务的GetMap接口的参数
+//           })
+//           layer.setMap(this._amap)
+//           layer.show()
+//         })
+//       }else{
+//         const wms = new AMap.TileLayer({
+//                 zIndex: 1,
+//                 tileUrl: 'http://172.16.5.138:3003/geoserver/gwc/service/wmts?layer=ezhou:EZMap&TileMatrix=EPSG:3857:[z]&TileMatrixSet=EPSG:3857&Request=GetTile&Service=WMTS&Format=image/png&TileRow=[y]&TileCol=[x]'
+//               })
+//         // const wms  = new AMap.TileLayer.WMS({
+//         //   url: tileUrl, // wms服务的url地址
+//         //   blend: false, // 地图级别切换时，不同级别的图片是否进行混合
+//         //   zooms:[0,20],
+//         //   tileSize:256,
+//         //   params: params // OGC标准的WMS地图服务的GetMap接口的参数
+//         // })
+//         wms.setMap(this._amap)
+//         wms.show()
+//       }
+//   }
+// }
 
   public addHeatMapData = (data:HeatMapData) => {
     this._setHeatmapData(data).then(value => {

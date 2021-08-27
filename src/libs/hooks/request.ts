@@ -1,8 +1,8 @@
 /*
 Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
-import {useState,useEffect,DependencyList} from 'react';
-import { useDispatch } from 'react-redux';
+import {useState,useRef,useMemo,useEffect,DependencyList} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 
 
@@ -44,6 +44,7 @@ export const usePolly = <T>(
 
   /*数据*/
   const exec = (params?:Object)=>{
+    setLoading(true)
     return apiService(params?params:parameters).then(res =>{
       if(res){
         if(complete){
@@ -55,6 +56,7 @@ export const usePolly = <T>(
       setLoading(false)
       next(res)
     }).catch(err => {
+      setLoading(false)
       onError && onError(null,err)
     })
   }

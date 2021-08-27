@@ -64,10 +64,10 @@ export class MapVectorGraph{
 
     switch (mapView.type) {
       case MapType.Gaode:
-          this.vectorgraph = new GDShape(mapView)
+          this.vectorgraph = new GDShape(mapInstance)
         break
       default:
-          this.vectorgraph = new GDShape(mapView)
+          this.vectorgraph = new GDShape(mapInstance)
         break
     }
 

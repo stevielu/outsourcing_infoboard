@@ -46,16 +46,25 @@ export type HeatMapValue = {
 }
 export type HeatMapData = HeatMapValue[]
 
-
-
-export type WMSProtocol = {
-  LAYERS: string|string[],
+export interface TitleProtocol {
+  TYPE:'WMS'|'WMTS'|'Custome',
   VERSION?: string,
-  STYLES?: string,
-  SRS?:string,
   TRANSPARENT?:boolean,
   FORMAT?:string,
   REQUEST?:string,
+  STYLES?: string,
+  SRS?:string,
+}// OGC标准的WMS地图服务的GetMap接口的参数
+export interface CustomTile extends TitleProtocol{
+  LAYER?: string|string[],
+}
+export interface WMSProtocol extends TitleProtocol{
+  LAYERS?: string|string[],
+}// OGC标准的WMS地图服务的GetMap接口的参数
+
+export interface WMTSProtocol extends TitleProtocol{
+  LAYER?: string|string[],
+  TileMatrixSet?:string,
 }// OGC标准的WMS地图服务的GetMap接口的参数
 
 export type ThreeDimension = {

@@ -3,7 +3,7 @@ Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
 
 import React,{ FunctionComponent,useEffect,useState,useCallback} from 'react'
-import {Coordinates2D,WMSProtocol,ThreeDimension,MapType} from '../common'
+import {Coordinates2D,WMSProtocol,WMTSProtocol,ThreeDimension,MapType} from '../common'
 import MapInterface,{MapOption} from '../map-core'
 import GeoCoder from '../map-geocoder'
 import {MapVectorGraph} from '../map-vectoroverlay'
@@ -31,7 +31,7 @@ type MapProps = {
   position?:Coordinates2D;
   initialPostion?:Coordinates2D;
   addEventListener?:MapEvent|MapEvent[];
-  wmsLayer?:{tileUrl:string;config:WMSProtocol|WMSProtocol[]};
+  wmsLayer?:{tileUrl:string;config:WMSProtocol|WMSProtocol[]|WMTSProtocol|WMTSProtocol[]};
   model?:ModelOption[]//3d模型
   viewMode?:string;
   version?:string;

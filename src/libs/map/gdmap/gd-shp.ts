@@ -2,20 +2,24 @@
 Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
 
-import {VectorOverlay,PolyLine,Polygon,PolyLineOpts,PolygonOpts,LineStyle} from '../map-vector'
+import {VectorOverlay,Shape,PolyLine,Polygon,PolyLineOpts,PolygonOpts,LineStyle} from '../map-vector'
 import { Coordinates2D } from '../common';
 import {MapInstance} from '../map-object';
-
+import MapInterface from '../map-core';
 /*****************
   基类
 *****************/
 class GDBaseVector {
+  map:MapInterface
   amap:any
   AMapLib:any
   path:Coordinates2D[] = []
-  constructor(map:MapInstance,path:Coordinates2D[]){
-    this.amap = map.originMapObject
-    this.AMapLib =  map.originInstance
+  extra?:Object
+  overlay?:any
+  constructor(mapObject:MapInterface,path:Coordinates2D[]){
+    this.map = mapObject
+    this.amap = mapObject.map.originMapObject
+    this.AMapLib =  mapObject.map.originInstance
     this.path = this.formatedPathValue(path)
   }
 
@@ -45,6 +49,13 @@ class GDBaseVector {
   hide = () => {
 
   };
+
+  remove = () => {
+    if(this.overlay){
+      this.amap.remove(this.overlay)
+    }
+    return false
+  }
 }
 
 /*****************
@@ -53,9 +64,8 @@ class GDBaseVector {
 export class GDPolyLine extends GDBaseVector implements PolyLine {
   polyline:any
 
-  constructor(map:MapInstance,path:Coordinates2D[],style?:PolyLineOpts){
+  constructor(map:MapInterface,path:Coordinates2D[],style?:PolyLineOpts){
     super(map,path)
-
     if(this.path){
       this.polyline = new this.AMapLib.Polyline({
         path: this.path,
@@ -67,6 +77,8 @@ export class GDPolyLine extends GDBaseVector implements PolyLine {
       });
       //add
       this.polyline.setMap(this.amap)
+      this.setPath(this.path)
+      this.overlay = this.polyline
     }else{
       console.log('add polyline error,invalid path parameters')
     }
@@ -76,9 +88,25 @@ export class GDPolyLine extends GDBaseVector implements PolyLine {
 
 
   setStyle = (opts: PolyLineOpts) => {
-
+    this.polyline.setOptions({
+      strokeOpacity:1,
+      strokeWeight: opts ? opts.width:2, // 线条宽度，默认为 2
+      strokeColor:opts ? opts.color:'red',
+      lineJoin: 'round', // 默认折线拐点连接处样式
+      showDir:opts ? opts.showArrow:false,
+      strokeStyle:opts ? (opts.lineStyle == LineStyle.Dashed) ? 'dashed':'solid':'solid'
+    })
   };
 
+  addEvent = (event:string,callback:(map:MapInterface,shapeObj:PolyLine)=>void) => {
+    this.polyline.on(event,(e:any)=>{
+      callback(this.map,this)
+    },this)
+  }
+
+  removeEvent = (event:string) =>{
+    this.polyline.clearEvents(event)
+  }
 }
 
 
@@ -88,7 +116,7 @@ export class GDPolyLine extends GDBaseVector implements PolyLine {
 export class GDPolygon extends GDBaseVector implements Polygon {
   polygon:any
 
-  constructor(map:MapInstance,path:Coordinates2D[],style?:PolygonOpts){
+  constructor(map:MapInterface,path:Coordinates2D[],style?:PolygonOpts){
     super(map,path)
     if(this.path){
       this.polygon = new this.AMapLib.Polygon({
@@ -102,6 +130,7 @@ export class GDPolygon extends GDBaseVector implements Polygon {
       //add
       this.polygon.setMap(this.amap)
       this.amap.setFitView([ this.polygon ])
+      this.overlay = this.polygon
     }else{
       console.log('add polygon error,invalid path parameters')
     }
@@ -130,6 +159,16 @@ export class GDPolygon extends GDBaseVector implements Polygon {
 
   }
 
+  addEvent = (event:string,callback:(map:MapInterface,shapeObj:PolyLine)=>void) => {
+    this.polygon.on(event,(e:any)=>{
+      callback(this.map,this)
+    },this)
+  }
+
+  removeEvent = (event:string) =>{
+    this.polygon.clearEvents(event)
+  }
+
 }
 
 /*****************
@@ -137,18 +176,20 @@ export class GDPolygon extends GDBaseVector implements Polygon {
 *****************/
 export class GDShape implements VectorOverlay{
   map: MapInstance;
+  mapView:MapInterface
   extData?: any;
-  constructor(map:MapInstance){
-    this.map = map
+  constructor(mapView:MapInterface){
+    this.map = mapView.map
+    this.mapView = mapView
   }
 
 
 
   createPolyline = (path:Coordinates2D[],style?:PolyLineOpts) => {
-    return new GDPolyLine(this.map,path,style)
+    return new GDPolyLine(this.mapView,path,style)
   }
 
   createPolygon = (path:Coordinates2D[],style?:PolygonOpts) => {
-    return new GDPolygon(this.map,path,style)
+    return new GDPolygon(this.mapView,path,style)
   }
 }
