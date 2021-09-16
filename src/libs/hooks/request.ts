@@ -3,6 +3,7 @@ Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
 import {useState,useRef,useMemo,useEffect,DependencyList} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { isFunction } from 'util';
 
 
 
@@ -28,45 +29,58 @@ const store = () => {
 
 }
 
+type SetParams = ()=>Object
 
+let timmer:ReturnType<typeof setTimeout>|null = null
 export const usePolly = <T>(
-  apiService:ApiServiceType<T>,
-  next:(res:T)=>Promise<void>,
-  interval:number,
-  parameters?:any,
-  deps?: DependencyList,
-  complete?:RequestCallback,
-  onError?:RequestCallback,
-  continueWhenFail?:boolean
+  args:{
+    apiService:ApiServiceType<T>;
+    interval:number;
+    parameters?:Object|SetParams;
+    next?:(res:T)=>void;
+    deps?: DependencyList;
+    continueWhenFail?:boolean;
+    onError?:RequestCallback;
+  },
+  auto:boolean = true
 ) =>{
-  const [data,setData] = useState<UnwarpPromise<ReturnType<typeof apiService>>>()
+
+  const [data,setData] = useState<UnwarpPromise<ReturnType<typeof args.apiService>>>()
   const [loading,setLoading] = useState(true)
 
   /*数据*/
-  const exec = (params?:Object)=>{
+  const exec = async (params?:Object|SetParams)=>{
+    let reqVal:Object = {}
     setLoading(true)
-    return apiService(params?params:parameters).then(res =>{
-      if(res){
-        if(complete){
-          complete(res,null)
-        }
-        setData(res)
+    if(isFunction(params) === true){
+      const setValue = params as SetParams
+      reqVal = setValue()
+    }else{
+      reqVal = params as Object
+    }
+    try {
+      const res = await args.apiService(reqVal);
+      if (res) {
+        setData(res);
       }
 
-      setLoading(false)
-      next(res)
-    }).catch(err => {
-      setLoading(false)
-      onError && onError(null,err)
-    })
+      setLoading(false);
+      args.next && args.next(res);
+    }
+    catch (err) {
+      setLoading(false);
+      args.onError && args.onError(null, err);
+    }
   }
-  let timmer:ReturnType<typeof setTimeout>|null = null
+
   const request = async (params?:Object) => {
+
     const fn = () => {
       timmer = setTimeout(()=>{
         exec(params).then(_ => fn())
-      },interval)
+      },args.interval)
     }
+
     fn()
   }
 
@@ -76,19 +90,26 @@ export const usePolly = <T>(
     }
   }
 
-  useEffect(()=>{
+  const start = () => {
     exec().then(_ =>{
-      request()
+      request(args.parameters)
     }).catch(_ =>{
-      if(continueWhenFail === true){
-        request()
+      if(args.continueWhenFail === true){
+        request(args.parameters)
       }
     })
+  }
+
+  useEffect(()=>{
+    if(auto == true){
+      start()
+    }
+
     return ()=>{
       stop()
     }
-  },[deps])
-  return {stop,request,data,loading}
+  },[args.deps])
+  return {start,stop,request,data,loading}
 }
 
 export const useRequest =   <T>(
