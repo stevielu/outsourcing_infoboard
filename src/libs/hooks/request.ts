@@ -1,7 +1,7 @@
 /*
 Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
-import {useState,useRef,useMemo,useEffect,DependencyList} from 'react';
+import {useState,useMemo,useCallback,useEffect,DependencyList} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isFunction } from 'util';
 
@@ -31,7 +31,7 @@ const store = () => {
 
 type SetParams = ()=>Object
 
-let timmer:ReturnType<typeof setTimeout>|null = null
+
 export const usePolly = <T>(
   args:{
     apiService:ApiServiceType<T>;
@@ -47,7 +47,10 @@ export const usePolly = <T>(
 
   const [data,setData] = useState<UnwarpPromise<ReturnType<typeof args.apiService>>>()
   const [loading,setLoading] = useState(true)
-
+  let timmer:ReturnType<typeof setTimeout>|null = null
+  const value = useMemo(()=>{
+    return args.parameters
+  },[args.parameters])
   /*数据*/
   const exec = async (params?:Object|SetParams)=>{
     let reqVal:Object = {}
@@ -73,7 +76,7 @@ export const usePolly = <T>(
     }
   }
 
-  const request = async (params?:Object) => {
+  const request = async (params?:Object|SetParams) => {
 
     const fn = () => {
       timmer = setTimeout(()=>{
@@ -84,21 +87,22 @@ export const usePolly = <T>(
     fn()
   }
 
-  const stop = () => {
+  const stop = useCallback(() => {
     if(timmer){
       clearTimeout(timmer)
     }
-  }
+  },[])
 
-  const start = () => {
+  const start = useCallback(() => {
     exec().then(_ =>{
-      request(args.parameters)
+      request(value)
     }).catch(_ =>{
       if(args.continueWhenFail === true){
-        request(args.parameters)
+        request(value)
       }
     })
-  }
+  },[])
+
 
   useEffect(()=>{
     if(auto == true){
