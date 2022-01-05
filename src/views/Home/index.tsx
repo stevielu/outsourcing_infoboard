@@ -13,7 +13,7 @@ const Main = styled(Container)`
   position:absolute;
   top:0;
   bottom:0;
-  display:table-cell;
+  display:flex;
 `
 
 export default () => {

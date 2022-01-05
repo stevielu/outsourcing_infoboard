@@ -6,7 +6,7 @@ import 'whatwg-fetch'
 axios.interceptors.request.use(config => {
     const token = localStorage.getItem('token');
     // in prod default to api host in config
-    if(token){
+    if(token && config.headers){
       config.headers.Authorization = token;
     }
 

@@ -15,9 +15,7 @@ import {useRequest,usePagination} from '../../libs/'
 const Toast = Logger('')
 
 
-export const useList = <T>(nameField:string,api:Api.ListAPI<T>,config?:{
-  store:boolean,//redux 存储
-}) => {
+export const useList = <T>(nameField:string,api:Api.ListAPI<T>) => {
   //reload
   const dispatch = useDispatch()
   const {reloadList} = useSelector(reloadFlag)
@@ -29,36 +27,36 @@ export const useList = <T>(nameField:string,api:Api.ListAPI<T>,config?:{
   const removeApi = useRequest(api.delete)
   const addApi = useRequest(api.add)
 
-  const remove = useCallback((values:any)=>{
-    return removeApi.request(values.id).then(data => {
-      if(data.error){
-        Toast.errorAlert(`删除失败:${data.error.message}`)
-      }else{
-        dispatch(setReload(nameField))
-      }
-    })
+  const remove = useCallback(async (values:any)=>{
+    const data = await removeApi.request(values.id);
+    if (data.error) {
+      Toast.errorAlert(`删除失败:${data.error.message}`);
+    }
+    else {
+      dispatch(setReload(nameField));
+    }
 
   },[])
 
-  const add = useCallback((values:any)=>{
-    return addApi.request(values).then(data => {
-      if(data.error){
-        Toast.errorAlert(`创建失败:${data.error.message}`)
-      }else{
-        dispatch(setReload(nameField))
-      }
-    })
+  const add = useCallback(async (values:any)=>{
+    const data = await addApi.request(values);
+    if (data.error) {
+      Toast.errorAlert(`创建失败:${data.error.message}`);
+    }
+    else {
+      dispatch(setReload(nameField));
+    }
   },[])
 
-  const update = useCallback((values:any)=>{
-    return updateApi.request(values).then(data => {
-      if(data.error){
-        Toast.errorAlert(`更新失败:${data.error.message}`)
-        throw(data.error)
-      }else{
-        dispatch(setReload(nameField))
-      }
-    })
+  const update = useCallback(async (values:any)=>{
+    const data = await updateApi.request(values);
+    if (data.error) {
+      Toast.errorAlert(`更新失败:${data.error.message}`);
+      throw (data.error);
+    }
+    else {
+      dispatch(setReload(nameField));
+    }
   },[])
 
   //分页处理

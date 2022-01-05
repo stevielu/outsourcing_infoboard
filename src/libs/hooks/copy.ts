@@ -8,7 +8,3 @@ const tools = ClipboardTools()
 export const useCopy = (item:string) =>{
   tools.copy(item)
 }
-
-export const copy = (item:string) =>{
-  tools.copy(item)
-}

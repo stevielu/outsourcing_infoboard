@@ -3,7 +3,7 @@ Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
 import {useRequest,usePolly} from './request'
 import {useModal} from './modal'
-import {useCopy,copy} from './copy'
+import {useCopy} from './copy'
 import {useUnlockEditor} from './unlockEdit'
 import {usePagination} from './pagination'
 import {useList} from './list'
@@ -14,7 +14,6 @@ export {
   usePolly,
   useModal,
   useCopy,
-  copy,
   useUnlockEditor,
   usePagination,
   useList,
