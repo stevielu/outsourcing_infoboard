@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="画板" transform="translate(-488.000000, -195.000000)">
+            <g id="编组" transform="translate(488.000000, 195.000000)">
+                <circle id="椭圆形" fill="#B3B3B3" cx="12" cy="12" r="12"></circle>
+                <g id="箭头-右-粗线条2" transform="translate(7.000000, 7.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                    <path d="M9.70212146,5.31464241 C9.81237285,5.20439102 9.81237285,5.03901395 9.70212146,4.87363691 L4.90618641,0.0777018618 C4.74080934,-0.0876752088 4.4100552,0.0225761803 4.4100552,0.298204614 L4.4100552,3.99162585 L0,3.99162585 L0,6.19665347 L4.4100552,6.19665347 L4.4100552,9.89007471 C4.4100552,10.1657032 4.74080934,10.2759545 4.90618641,10.1105775 L9.70212146,5.31464241 Z" id="路径"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

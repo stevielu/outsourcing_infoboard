@@ -44,7 +44,7 @@ export const theme = {
   fontColor:black,
   titleColor:bold,
   borderWidth:"1px",
-  fontWeight:600,
+  fontWeight:500,
   fontSize:'12px',
   titleSize:'14px',
   headTitle:'24px',
