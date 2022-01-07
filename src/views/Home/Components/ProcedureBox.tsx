@@ -1,8 +1,8 @@
 import React,{FunctionComponent} from 'react';
 import styled from 'styled-components'
-import { Tooltip } from 'antd';
+import { Tooltip,Button } from 'antd';
 import { Container,ContentFont } from '../../../libs/base/base-style'
-
+import UUID from '../../../utils/uuid'
 export enum Status{
   Limited = 3,
   Done = 2,
@@ -46,7 +46,7 @@ const Content = styled(ContentFont)`
 `
 const App:FunctionComponent<ProcedureProps> = (props) => {
   return(
-    <Box style = {{backgroundColor:StatusColor[props.status]}} >
+    <Box style = {{backgroundColor:StatusColor[props.status]}} key={UUID.get()} {...props}>
       <Tooltip title={props.title}>
         <Content color = {TitleColor[props.status]}>{props.title} </Content>
       </Tooltip>

@@ -6,6 +6,7 @@ import React from 'react';
 import { Container } from '../../libs/base/base-style'
 import StepBar,{Stage} from './Components/StageBar'
 import Procedures,{Status} from './Components/ProcedureBox'
+import Popover from './Components/Popover'
 import styled from 'styled-components'
 import { map } from 'lodash';
 const Main = styled(Container)`
@@ -40,8 +41,35 @@ const data = [
         title:'写不下就隐藏写不下就隐藏写不下就隐藏',
         status:Status.Done,
       },{
-        title:'写不下就隐藏写不下就隐藏写不下就隐藏',
+        title:'有东西',
         status:Status.Done,
+        task:[
+          {
+            title:'事件地点任务1',
+            id:0,
+            selected:false
+          },
+          {
+            title:'事件地点任务2',
+            id:1,
+            selected:false
+          },
+          {
+            title:'事件地点任务',
+            id:2,
+            selected:false
+          },
+          {
+            title:'事件地点任务',
+            id:3,
+            selected:true
+          },
+          {
+            title:'事件地点任务',
+            id:4,
+            selected:false
+          }
+        ]
       },{
         title:'写不下就隐藏写不下就隐藏写不下就隐藏',
         status:Status.Done,
@@ -90,6 +118,19 @@ const data = [
       },{
         title:'写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏',
         status:Status.Limited,
+        task:[
+          {
+            title:'事件地点任务',
+            id:5,
+            selected:false
+          },
+          {
+            title:'事件地点任务',
+            id:6,
+            selected:false
+          },
+
+        ]
       }
     ]
   }
@@ -105,7 +146,10 @@ export default () => {
             <StepBar {...step}/>
             <Task>
             {map(step.procedure,item =>{
-              return <Procedures {...item}/>
+              return item.task ?
+              <Popover data = {item.task} onChange = {(e:any)=> console.log(e)}>
+                <Procedures {...item}/>
+              </Popover>:<Procedures {...item}/>
             })}
             </Task>
           </Item>
