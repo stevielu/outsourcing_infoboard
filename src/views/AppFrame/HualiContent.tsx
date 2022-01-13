@@ -18,7 +18,7 @@ const HualiContent = ({ config }: { config: MenuRoute }) => {
   return(
     <Switch>
       {getContens()}
-       <Redirect from={'/'} to ={'/view/dataShow'}/>
+       <Redirect from={'/'} to ={'/show'}/>
 
 
     </Switch>

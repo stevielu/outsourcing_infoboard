@@ -13,12 +13,7 @@ code {
 }
 
 
-.amap-marker-label{
-  border: 0;
-  background-color: transparent;
-  padding: 0;
-  transform:rotate(0deg) !important;
-}
+
 .size-modal-4K-lagre .ant-modal-content{
   margin-top: 20px;
   transform: scale(1.5);

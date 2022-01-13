@@ -9,39 +9,39 @@ import { Layout,Row,Col} from 'antd';
 import AuthManager from '../../libs/auth';
 import HualiMenu from './HualiMenu';
 import HualiContent from './HualiContent';
-import { LogoImg } from '../Components'
+import Avatar from './Avatar'
 
-import {setStatus} from '../../libs/auth/store'
-import logo from '../../assets/common/logo.png'
+
 import config from './config';
-import {theme,StyledLayout} from '../../libs/base/base-style'
+import {theme,StyledLayout,TitleFont} from '../../libs/base/base-style'
 import styled,{ ThemeProvider } from 'styled-components';
 import { split, join, slice } from 'lodash';
 const { Header, Sider, Content } = Layout;
 
-const Logo = styled(LogoImg)`
-  width: 168px !important;
-  margin: 16px;
+const Logo = styled(TitleFont)`
+  font-size: 24px;
+  color: #393550;
+  -webkit-letter-spacing: 0;
+  -moz-letter-spacing: 0;
+  -ms-letter-spacing: 0;
+  letter-spacing: 0;
+  text-align: center;
+  font-weight: 900;
+  margin: 10px;
 `;
 
-const StyledTop = styled.div`
-  box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.1);
-  height: 64px;
+const StyledSider = styled(Sider)`
+  background:#fff;
 `;
 
 const StyledContent = styled(Content)`
-  margin: 0;
-  padding: 0;
-  min-height: 100% !important;
-  display:table;
+
 `;
 // TODO @changran remove important
-const StyledHeader = styled(Header)`
-  background: #fff !important;
-  padding: 0 !important;
-  height: fit-content !important;
+const StyledAvatar = styled(Avatar)`
+  width:100px;
 `;
-const IS_SIDE = undefined
+const IS_SIDE = true
 export const Main =  () => {
   const { pathname } = useLocation();
   const [collapsed, setCollapsed] = useState(false);
@@ -57,23 +57,24 @@ export const Main =  () => {
   return (
     <ThemeProvider theme={theme}>
       {IS_SIDE &&
-        <Sider trigger={null} collapsible collapsed={collapsed}>
+        <StyledSider trigger={null} collapsible collapsed={collapsed}>
           <Link
             to={{
               pathname: '/',
             }}
           >
-            <Logo/>
+            <Logo>处置突发事件决策指挥辅助系统</Logo>
           </Link>
+          <StyledAvatar name={'张三'} subTitle={'指挥处处长｜参谋部'}/>
           <HualiMenu
             config={config}
             defaultOpenKeys={firstPart}
             selectedKeys={[activeKey]}
           />
-        </Sider>
+        </StyledSider>
       }
 
-      <Layout>
+      <Layout style={{background:'#fff'}}>
         <StyledContent>
           <HualiContent config={config} />
         </StyledContent>

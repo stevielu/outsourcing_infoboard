@@ -4,7 +4,6 @@ import { Tooltip,Button } from 'antd';
 import { Container,ContentFont } from '../../../libs/base/base-style'
 import UUID from '../../../utils/uuid'
 export enum Status{
-  Limited = 3,
   Done = 2,
   InProgress = 1,
   Initial = 0,
@@ -12,44 +11,105 @@ export enum Status{
 export type ProcedureProps = {
   title:string;
   status:Status;
+  pid:number|string;
+  tally:string;
 }
 const StatusColor = {
-  [Status.Done]:'#DEF5FF',
-  [Status.InProgress]:'#157BF7',
-  [Status.Initial]:'#F2F2F2',
-  [Status.Limited]:'#666666',
+  [Status.Done]:'#FFF',
+  [Status.InProgress]:'#FA6400',
+  [Status.Initial]:'#BFBEBE',
+
 }
 const TitleColor = {
-  [Status.Done]:'#333333',
+  [Status.Done]:'#6770FC',
   [Status.InProgress]:'#FFFFFF',
-  [Status.Initial]:'#333333',
-  [Status.Limited]:'#CCCCCC',
+  [Status.Initial]:'#FFF',
+
+}
+const CircleColor = {
+  [Status.Done]:'#6770FC',
+  [Status.InProgress]:'#FFDDC7',
+  [Status.Initial]:'#747576',
+
+}
+const TagTitleColor = {
+  [Status.Done]:'#FFF',
+  [Status.InProgress]:'#FA6400',
+  [Status.Initial]:'#FFF',
+
+}
+const TagColor = {
+  [Status.Done]:'#8F95FF',
+  [Status.InProgress]:'#FF944C',
+  [Status.Initial]:'#F9F3F3',
+
 }
 const Box = styled(Container)`
-  width:97.87px;
-  height:62px;
+  max-width:228px;
+  height:60px;
   border-radius:3px;
   margin-right:6px;
   margin-top:6px;
-  flex:1;
   display: flex;
-  padding: 5px;
+  align-items: center;
+  flex-direction:row;
+  border:1px solid grey;
 `
 
 
 const Content = styled(ContentFont)`
   display: -webkit-box;
-  max-width: 200px;
+  max-width: 157px;
+  min-width: 50px;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  padding-left: 5px;
+`
+const Pid = styled(Container)`
+  display: flex;
+  align-items: center;
+  border: 1px solid grey;
+  height: 60px;
+  border-radius: 3px;
+  margin: -1px;
+  background:#8F95FF;
+`
+const Circle = styled(Container)`
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  background: #7c2aff;
+  color: #fff;
+  text-align: center;
+  font: 12px Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  `
+const IDContent = styled(ContentFont)`
+width: 100%;
+`
+const TallyContent = styled(ContentFont)`
+  background-color: #52c41a;
+  padding-left: 2px;
+  padding-right: 2px;
+  color: white;
+  margin-right: 5px !important;
+  border-radius:3px;
 `
 const App:FunctionComponent<ProcedureProps> = (props) => {
   return(
-    <Box style = {{backgroundColor:StatusColor[props.status]}} key={UUID.get()} {...props}>
+    <Box style = {{backgroundColor:StatusColor[props.status],borderColor:TagColor[props.status]}} key={UUID.get()} {...props}>
+      <Pid style = {{backgroundColor:TagColor[props.status],borderColor:TagColor[props.status]}} >
+        <Circle style = {{backgroundColor:CircleColor[props.status]}}>
+          <IDContent color = {TagTitleColor[props.status]}>{props.pid}</IDContent>
+        </Circle>
+      </Pid>
       <Tooltip title={props.title}>
         <Content color = {TitleColor[props.status]}>{props.title} </Content>
       </Tooltip>
+      <TallyContent style = {{backgroundColor:CircleColor[props.status]}}>{props.tally}</TallyContent>
     </Box>
   )
 }

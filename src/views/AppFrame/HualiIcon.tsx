@@ -1,17 +1,20 @@
 /*
 Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
-import React from 'react';
+import React,{FunctionComponent} from 'react';
 import { isString } from 'lodash';
 
 import { HualiIcon as TypeHualiIcon } from './d';
 
-const HualiIcon = ({ icon }: { icon: TypeHualiIcon }) => {
-  if (isString(icon)) {
-    return <div></div>;
+type IconProps = {
+  icon:TypeHualiIcon
+}
+const HualiIcon:FunctionComponent<IconProps> = (props) => {
+  if (isString(props.icon)) {
+    return <img src = {props.icon} {...props}></img>;
   }
 
-  const CurrentIcon = icon;
+  const CurrentIcon = props.icon;
 
   return CurrentIcon;
 };

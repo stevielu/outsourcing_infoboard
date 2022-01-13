@@ -1,10 +1,14 @@
 import React,{FunctionComponent} from 'react';
 import styled from 'styled-components'
-import { Popover,Checkbox,Row, Col  } from 'antd';
-import { Container,ContentFont } from '../../../libs/base/base-style'
-
+import { Popover,Checkbox,Row, Col,Input,Form} from 'antd';
+import { Container,ContentFont,TitleFont,BoldFont,IconButton} from '../../../libs/base/base-style'
+import { CheckOutlined ,CloseOutlined} from '@ant-design/icons';
 
 export type ProcedureProps = {
+  current:{
+    phase:string;
+    id:string|number;
+  },
   data:{
     title:string;
     id:number;
@@ -13,98 +17,155 @@ export type ProcedureProps = {
   onChange:(e:any)=>void;
 }
 
-// const Box = styled(Container)`
-//   width:97.87px;
-//   height:62px;
-//   border-radius:3px;
-//   margin-right:6px;
-//   margin-top:6px;
-//   flex:1;
-//   display: flex;
-//   padding: 5px;
-// `
-
-
-// const Content = styled(ContentFont)`
-//   display: -webkit-box;
-//   max-width: 200px;
-//   -webkit-line-clamp: 3;
-//   -webkit-box-orient: vertical;
-//   overflow: hidden;
-// `
-// const TitleBox = styled(Container)`
-//   display:flex;
-//   flex-direction:column;
-// `
 const Tally = styled(ContentFont)`
   margin-left:auto;
+  color:white;
 `
-// const Header:FunctionComponent<{cnt:number,total:number,onChange:(e:any)=>void> = (props) => {
-//
-//   const onClick = React.useCallback((e:any)=>{
-//     // props.onChange(e)
-//     // setIndeterminate(false);
-//     // setCheckAll(e.target.checked);
-//   },[])
-//   return (
-//     <Container>
-//       <Checkbox indeterminate={indeterminate} onChange={onClick} checked={checkAll}/>
-//       <ContentFont>全部</ContentFont>
-//       <Tally>{`${props.cnt}/${props.total}`}</Tally>
-//     </Container>
-//   )
-// }
-//
+const Header = styled(Container)`
+  display:flex;
+  align-items: center;
+`
+const Right = styled(Container)`
+  margin-left:auto;
 
-// const Body:FunctionComponent<{data:Array<string>,onChange:(e:any)=>void}> = (props) => {
-//   const [checkedList, setCheckedList] = React.useState(props.data);
-//   return (
-//     <CheckboxGroup options={props.data} value={checkedList} onChange={props.onChange} />
-//   )
-// }
-const CheckboxGroup = Checkbox.Group;
+`
+const StyledCheckBox = styled(Col)`
+padding-left: 4px;
+  .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #6231d3;
+  border-color: #6231d3;
+}
+`
+
+const StyledNotes = styled(Col)`
+  margin-top: 10px;
+  margin-bottom: 10px;
+  .ant-input{
+    border-radius:5px;
+    background:#fff5e7;
+  }
+`
+
+const LeftBorder = styled(Container)`
+  background: #393550;
+  height: 20px;
+  width: 5px;
+  margin-right: 5px;
+`
+const Title = styled(Container)`
+  display:flex;
+  align-items: center;
+  background:black;
+  background: #393550;
+  border-radius: 3px;
+  height: 40px;
+  padding: 5px;
+  .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #6231d3;
+  border-color: #6231d3;
+}
+`
+const WhiteFont = styled(ContentFont)`
+  color:white;
+  font-size:14px;
+`
 const App:FunctionComponent<ProcedureProps> = (props) => {
-  const [checkedList, setCheckedList] = React.useState(props.data.filter(item => item.selected === true).map(item => item.title));
+  const [checkedList, setCheckedList] = React.useState(props.data.filter(item => item.selected === true).map(item => item.id));
   const [indeterminate, setIndeterminate] = React.useState(true);
   const [checkAll, setCheckAll] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const handleClickChange = (val:boolean) => {
+    setVisible(val);
+  };
+
   const onClick = React.useCallback((e:any)=>{
-    setCheckedList(e.target.checked ? props.data.map(item => item.title) : []);
+    setCheckedList(e.target.checked ? props.data.map(item => item.id) : []);
     setIndeterminate(false);
     setCheckAll(e.target.checked);
-    props.onChange(e)
+
   },[])
   const onChange = (list:any) => {
-    console.log(list)
     setCheckedList(list);
     setIndeterminate(!!list.length && list.length < props.data.length);
     setCheckAll(list.length === props.data.length);
-    props.onChange(list)
+
 
   };
 
+  const update = ()=>{
+    const value = form.getFieldsValue()
+    const res = Object.keys(value).map(key => {
+      return{
+        checked:checkedList.find(member => String(member) === key) != undefined,
+        notes:value[key].notes === undefined ?'':value[key].notes
+      }
+    })
+    return res
+  }
+  const [form] = Form.useForm()
   return(
     <Popover
       placement="rightTop"
+      visible={visible}
+      onVisibleChange = {handleClickChange}
       title={
-        <Container>
-          <Checkbox indeterminate={indeterminate} onChange={onClick} checked={checkAll}/>
-          <ContentFont>全部</ContentFont>
-          <Tally>{`0/${props.data.length}`}</Tally>
-        </Container>
+        <Header>
+          <LeftBorder/>
+          <TitleFont style = {{fontWeight:550}}>事项处理</TitleFont>
+          <Right>
+            <IconButton icon={<CloseOutlined />} color={'grey'} onClick = {()=>setVisible(false)}/>
+            <IconButton icon={<CheckOutlined />}
+            onClick = {()=>{
+              props.onChange(update())
+              setVisible(false)
+            }} />
+          </Right>
+        </Header>
       }
     content={
-      <CheckboxGroup options={props.data.map(item => item.title)} value={checkedList} >
-        <Row>
-          {props.data.map(item=>{
-            return (
-              <Col span={24}>
-                <Checkbox  onChange={onChange} key = {item.id} value={item.id}>{item.title}</Checkbox>
-              </Col>
-            )
-          })}
+      <Container>
+        <Title>
+          <Checkbox indeterminate={indeterminate} onChange={onClick} checked={checkAll} style={{ marginRight: '5px' }}/>
+          <WhiteFont>{props.current.phase}/{props.current.id}</WhiteFont>
+          <Right>
 
-        </Row>
-      </CheckboxGroup>
+            <Tally>完成情况(<ContentFont color={'#9281b9'}>{checkedList.length}</ContentFont>/<ContentFont color={'white'}>{props.data.length}</ContentFont>)</Tally>
+          </Right>
+        </Title>
+        <Checkbox.Group style={{ width: '250px',paddingTop:'10px',flexDirection:'row-reverse'}} onChange={onChange} value = {checkedList}>
+          <Row>
+          <Form form={form}>
+            {props.data.map(item=>{
+              return (
+                <Container >
+                  <Form.Item
+                    name={[item.id, 'checked']}
+                    style={{ margin:0}}
+                  >
+                    <StyledCheckBox span={24}>
+                      <Checkbox onChange={onChange} value={item.id}><BoldFont style={{fontSize:'11px'}}>{item.title}</BoldFont></Checkbox>
+                    </StyledCheckBox>
+                  </Form.Item>
+                  <Form.Item
+                    name={[item.id, 'notes']}
+                    style={{ margin:0}}
+                  >
+                    <StyledNotes span={24}>
+                      <Input placeholder={"请填写备注，可以为空"} onChange={(value)=>{
+                        console.log(value)
+                      }}></Input>
+                    </StyledNotes>
+                  </Form.Item>
+
+                </Container>
+
+              )
+            })}
+            </Form>
+          </Row>
+        </Checkbox.Group>
+      </Container>
+
     }
     trigger="click">
       {props.children}

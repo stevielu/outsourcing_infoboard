@@ -45,7 +45,7 @@ export const theme = {
   titleColor:bold,
   borderWidth:"1px",
   fontWeight:500,
-  fontSize:'12px',
+  fontSize:'10px',
   titleSize:'14px',
   headTitle:'24px',
   padding:'16px',
@@ -187,7 +187,7 @@ export const LinkButton = styled(Button).attrs(props => ({
 export const IconButton = styled(Button).attrs(props => ({
   type:'link',
 }))`
-  color:${props => props.theme.color.maya} !important;
+  color:${props => props.color || props.theme.color.maya};
 `;
 
 
