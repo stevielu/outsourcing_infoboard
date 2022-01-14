@@ -32,6 +32,7 @@ min-width:200px;
 const Task = styled(Container)`
 display:flex;
 flex-direction:row;
+flex-wrap:wrap;
 `
 const data = [
   {
@@ -154,7 +155,71 @@ const data = [
         ]
       }
     ]
-  }
+  },{
+    title:'阶段五：什么就是',
+    phase:'阶段五',
+    activate:Stage.Initial,
+    procedure:[
+      {
+        title:'写不下就隐藏写不下就隐藏写不下就隐藏',
+        status:Status.Initial,
+        id:11,
+      },{
+        title:'写不下就隐藏写不下就隐藏写不下就隐藏',
+        status:Status.Initial,
+        id:12,
+      },{
+        title:'写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏',
+        status:Status.Initial,
+        id:13,
+        task:[
+          {
+            title:'事件地点任务',
+            id:5,
+            selected:false
+          },
+          {
+            title:'事件地点任务',
+            id:6,
+            selected:false
+          },
+
+        ]
+      }
+    ]
+  },{
+    title:'阶段六：什么就是',
+    phase:'阶段六',
+    activate:Stage.Initial,
+    procedure:[
+      {
+        title:'写不下就隐藏写不下就隐藏写不下就隐藏',
+        status:Status.Initial,
+        id:11,
+      },{
+        title:'写不下就隐藏写不下就隐藏写不下就隐藏',
+        status:Status.Initial,
+        id:12,
+      },{
+        title:'写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏写不下就隐藏',
+        status:Status.Initial,
+        id:13,
+        task:[
+          {
+            title:'事件地点任务',
+            id:5,
+            selected:false
+          },
+          {
+            title:'事件地点任务',
+            id:6,
+            selected:false
+          },
+
+        ]
+      }
+    ]
+  },
 ]
 
 export default () => {
