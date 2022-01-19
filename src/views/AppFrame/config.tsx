@@ -2,6 +2,7 @@
 Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
 import Home from '../Home'
+import Board from '../Board'
 import manage_ico from '../../assets/menu/manage.svg'
 import config_ico from '../../assets/menu/config.svg'
 
@@ -18,7 +19,7 @@ export default [
         pathname: 'show',
         displayName: '处置行动数据展示',
         icon: '',
-        content:Home
+        content:Board
       },
       {
         pathname: 'test',

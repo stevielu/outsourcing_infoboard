@@ -35,7 +35,10 @@ const StyledSider = styled(Sider)`
 `;
 
 const StyledContent = styled(Content)`
-
+  flex: auto;
+  min-height: 0;
+  align-content: center;
+  display: flex;
 `;
 // TODO @changran remove important
 const StyledAvatar = styled(Avatar)`

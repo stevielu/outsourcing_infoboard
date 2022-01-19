@@ -47,7 +47,7 @@ export const theme = {
   fontWeight:500,
   fontSize:'10px',
   titleSize:'14px',
-  headTitle:'24px',
+  headTitle:'30px',
   padding:'16px',
   margin:'8px',
   minorSpacing:'8px',
@@ -96,6 +96,7 @@ export const HLMenu = styled(Menu)`
 export const HeadFont = styled.p`
   font-size:  ${props => props.theme.headTitle};
   color: ${props =>  props.color || props.theme.titleColor};
+  font-weight: 600;
   margin: 0;
 `;
 
