@@ -16,7 +16,7 @@ const Wrapper = styled(Container)`
 `
 const Item = styled(Container)`
   display: flex;
-  flex-direction:row;  
+  flex-direction:row;
 `
 const Name = styled(TitleFont)`
   color:#fff;
@@ -38,11 +38,7 @@ const App:FunctionComponent<Props> = (props) => {
       <Item>
         <Name>第一阶段</Name>
       </Item>
-      // {
-      //   props.steps.map(item => {
-      //     return <>
-      //   })
-      // }
+
     </Wrapper>
   )
 };

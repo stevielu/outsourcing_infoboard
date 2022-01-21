@@ -3,6 +3,7 @@ Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
 import Home from '../Home'
 import Board from '../Board'
+import Template from '../Manage/Template'
 import manage_ico from '../../assets/menu/manage.svg'
 import config_ico from '../../assets/menu/config.svg'
 
@@ -30,7 +31,21 @@ export default [
     ]
 
   },
+  {
+    pathname: 'manage',
+    displayName: '系统管理',
+    icon: config_ico,
+    subMenu: [
+      {
+        pathname: 'template',
+        displayName: '预案模版管理',
+        icon: '',
+        content:Template
+      },
 
+    ]
+
+  },
 ] as MenuRoute;
 
 
