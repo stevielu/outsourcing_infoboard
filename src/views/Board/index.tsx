@@ -5,7 +5,6 @@ Copyright (c) 2021 by Stevie. All Rights Reserved.
 import React,{FunctionComponent} from 'react';
 import Main from '../Components/Main'
 import Title from './Title'
-import Step from './StepBar'
 import styled from 'styled-components';
 
 

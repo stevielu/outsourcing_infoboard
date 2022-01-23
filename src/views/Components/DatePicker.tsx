@@ -39,7 +39,7 @@ const App:FunctionComponent<DatePickerProps> = (props) => {
   };
 
   const range = (start:number, end:number) =>{
-    const result = [];
+    const result:Array<number> = [];
     for (let i = start; i < end; i++) {
       result.push(i);
     }

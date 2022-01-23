@@ -35,7 +35,7 @@ const StyledSider = styled(Sider)`
 `;
 
 const StyledContent = styled(Content)`
-  flex: auto;
+  flex: 1 0 auto;
   min-height: 0;
   align-content: center;
   display: flex;
