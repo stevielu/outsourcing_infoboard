@@ -7,6 +7,7 @@ import { Tabs,Select,Button,Input} from 'antd';
 import {CaretDownOutlined,ContainerFilled} from '@ant-design/icons'
 import Main from '../Components/Main'
 import StepBar,{StepStatus} from '../Components/StepBar'
+import Popover from './Popover'
 import styled from 'styled-components';
 
 const { TabPane } = Tabs;
@@ -143,7 +144,12 @@ const Procedure:FunctionComponent = (props) => {
       <Option value={false}>普通</Option>
       <Option value={true}>关键</Option>
     </StyledSelect3>
-    <StyledInput bordered={false} placeholder={'请输入步骤内容'} suffix={<Button type={'link'} icon={<ContainerFilled  style={{color:'#6871FC'}}/>}/>}/>
+
+    <StyledInput bordered={false} placeholder={'请输入步骤内容'} suffix={<Button type={'link'} icon={
+      <Popover  onChange = {(e:any)=> console.log(e)}>
+        <ContainerFilled  style={{color:'#6871FC'}}/>
+      </Popover>
+    }/>}/>
     </ProcedureWrapper>
   )
 }
