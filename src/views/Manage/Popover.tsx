@@ -5,14 +5,8 @@ import { Container,ContentFont,TitleFont,LinkButton,IconButton} from '../../libs
 import {genOptions} from './utils'
 import { CheckOutlined ,CloseOutlined} from '@ant-design/icons';
 import './index.css'
-export type ProcedureProps = {
-  onChange?:(e:any)=>void;
-}
 
-const Tally = styled(ContentFont)`
-  margin-left:auto;
-  color:white;
-`
+
 const Header = styled(Container)`
 display: flex;
 color: #fff;
@@ -20,46 +14,8 @@ justify-content: flex-start;
 height: 100%;
 align-items: center;
 `
-const Right = styled(Container)`
-  margin-left:auto;
 
-`
-const StyledCheckBox = styled(Col)`
-padding-left: 4px;
-  .ant-checkbox-checked .ant-checkbox-inner {
-  background-color: #6231d3;
-  border-color: #6231d3;
-}
-`
 
-const StyledNotes = styled(Col)`
-  margin-top: 10px;
-  margin-bottom: 10px;
-  .ant-input{
-    border-radius:5px;
-    background:#fff5e7;
-  }
-`
-
-const LeftBorder = styled(Container)`
-  background: #393550;
-  height: 20px;
-  width: 5px;
-  margin-right: 5px;
-`
-const Title = styled(Container)`
-  display:flex;
-  align-items: center;
-  background:black;
-  background: #393550;
-  border-radius: 3px;
-  height: 40px;
-  padding: 5px;
-  .ant-checkbox-checked .ant-checkbox-inner {
-  background-color: #6231d3;
-  border-color: #6231d3;
-}
-`
 const WhiteFont = styled(ContentFont)`
   color:white;
   font-size:14px;
@@ -91,16 +47,21 @@ font-weight: 500;
 margin: 0;
 width: 8px;
 `
+const Share = React.createContext<any>(null);
 
-const SelectBefore:FunctionComponent<{onChange:(val)=>void}> = (props) =>{
-  return<Select placeholder={'序号'} onChange={props.onChange}>
-      {genOptions().map(item => item)}
+const SelectBefore:FunctionComponent<{id:number|string;}> = (props) =>{
+  return(<Form.Item style={{marginBottom:0}}name={[props.id,'index']}>
+    <Select placeholder={'序号'}>
+        {genOptions().map(item => item)}
     </Select>
+  </Form.Item>)
 }
 
 const Clear:FunctionComponent<{onClick:()=>void}> = (props) =>{
+  const {setCount} = React.useContext(Share)
   return (<IconButton icon={<CloseOutlined />} onClick={()=>{
     props.onClick()
+    setCount(cnt => cnt -1)
   }}/>)
 }
 const StyledInput = styled(Input)`
@@ -108,10 +69,17 @@ const StyledInput = styled(Input)`
 `
 const NewInput:FunctionComponent<{index:number|string}> = (props) => {
   const [visible,setVisible] = React.useState(true)
-
+  // let selected = ''
+  // const index = React.useMemo(()=>{
+  //
+  //   return selected
+  // },[selected])
+  // React.useEffect(()=>{
+  //   form.setFieldsValue({[props.index]:{[index]:form.getFieldValue(props.index)}})
+  // },[index])
   return (
-    <div>{visible === true &&<Form.Item style={{marginBottom:0}}name={props.index}>
-      <StyledInput placeholder="请填写备注，可以为空" size="small" addonBefore={<SelectBefore onChange={(val) =>{}}/>} suffix={<Clear onClick={()=>{setVisible(false)}}/>}/>
+    <div>{visible === true &&<Form.Item style={{marginBottom:0}}name={[props.index,'content']}>
+      <StyledInput placeholder="请填写备注，可以为空" size="small" addonBefore={<SelectBefore id={props.index}/>} suffix={<Clear onClick={()=>{setVisible(false)}}/>}/>
       </Form.Item>
     }</div>
 
@@ -138,9 +106,14 @@ border-color:#393550;
   border-color:#393550 !important;
 }
 `
-const App:FunctionComponent<ProcedureProps> = (props) => {
 
+export type ProcedureProps = {
+  onChange?:(e:any)=>void;
+}
+const App:FunctionComponent<ProcedureProps> = (props) => {
+  const [form] = Form.useForm()
   const [visible, setVisible] = React.useState(false);
+  const [count,setCount] = React.useState(1)
   const handleClickChange = (val:boolean) => {
     setVisible(val);
   };
@@ -150,12 +123,16 @@ const App:FunctionComponent<ProcedureProps> = (props) => {
     setElements(items => {
       return [...items,<NewInput index = {items.length}/>]
     })
+    setCount(cnt => cnt + 1)
   }
-  const [form] = Form.useForm()
+
   const save = () => {
-    console.log(form.getFieldsValue())
+    props.onChange && props.onChange(form.getFieldsValue())
+    setVisible(false)
   }
+
   return(
+    <Share.Provider value={{count,setCount}}>
     <StyledPop
       placement="bottom"
       visible={visible}
@@ -176,14 +153,14 @@ const App:FunctionComponent<ProcedureProps> = (props) => {
     content={
       <Container style={{display:'flex',flexDirection:'column'}}>
         <StyledStatus>
-        <StatusFont style={{marginRight:'auto'}}>已添加<BlueFont>0</BlueFont>事项</StatusFont>
+        <StatusFont style={{marginRight:'auto'}}>已添加<BlueFont>{count}</BlueFont>事项</StatusFont>
         <LinkButton style={{marginLeft:'auto'}} onClick={add}>+ 添加事项</LinkButton>
         </StyledStatus>
         <Form form={form}>
           {elements}
         </Form>
         <Footer>
-          <Button type="text">取消</Button>
+          <Button type="text" onClick={() => setVisible(false)}>取消</Button>
           <StyledButton type='primary' onClick={save}>保存</StyledButton>
         </Footer>
       </Container>
@@ -192,6 +169,7 @@ const App:FunctionComponent<ProcedureProps> = (props) => {
     trigger="click">
       {props.children}
     </StyledPop>
+    </Share.Provider>
   )
 }
 export default App

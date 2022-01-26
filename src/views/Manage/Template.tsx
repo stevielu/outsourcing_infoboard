@@ -3,7 +3,7 @@ Copyright (c) 2021 by Stevie. All Rights Reserved.
 */
 
 import React,{FunctionComponent} from 'react';
-import { Tabs,Select,Button,Input} from 'antd';
+import { Tabs,Select,Button,Input,Form} from 'antd';
 import {CaretDownOutlined,ContainerFilled} from '@ant-design/icons'
 import Main from '../Components/Main'
 import StepBar,{StepStatus} from '../Components/StepBar'
@@ -72,7 +72,6 @@ const CNNumChar =  ["一","二","三","四","五","六","七","八","九"]
 
 
 const ProcedureWrapper = styled.div`
-width: 320px;
 height: 32px;
 background: #fff;
 display: flex;
@@ -96,7 +95,7 @@ const StyledSelect = styled(Select)`
 }
 `
 const StyledSelect2 = styled(Select)`
-  width:71px;
+  width:73px;
   height:32px;
  .ant-select-selector{
     outline: 1px solid #CBCBCB !important;
@@ -121,7 +120,24 @@ const StyledInput = styled(Input)`
   width:155px;
   height:32px;
 `
-const Procedure:FunctionComponent = (props) => {
+const Count = styled.p`
+width: 18px;
+margin:0;
+font-family: PingFangSC-Semibold;
+font-size: 12px;
+color: #FFFFFF;
+letter-spacing: 0;
+font-weight: 600;
+background:#6871FC;
+`
+
+const StyleFormItem = styled(Form.Item)`
+margin-bottom:0;
+`
+const Procedure:FunctionComponent<{id:number|string,form:ReturnType<typeof Form.useForm>}> = (props) => {
+  const [taskCnt,setTaskCnt] = React.useState(0)
+  const [f] = props.form
+
   const gen = ()=>{
     let arrs:Array<JSX.Element> = []
     for(let i =1;i<=99;i++){
@@ -132,24 +148,36 @@ const Procedure:FunctionComponent = (props) => {
   const {steps} = React.useContext(Share)
   return(
     <ProcedureWrapper>
-    <StyledSelect  suffixIcon={<CaretDownOutlined style={{color:'#fff'}}/>} defaultValue ={1}>
-      {gen().map(item => item)}
-    </StyledSelect>
-    <StyledSelect2  suffixIcon={<CaretDownOutlined/>} defaultValue ={steps[0].name}>
-      {steps.map((item,index) => {
-        return(<Option value={item.name}>{`阶段${index+1}`}</Option>)
-      })}
-    </StyledSelect2>
-    <StyledSelect3  suffixIcon={<CaretDownOutlined/>} defaultValue ={false}>
-      <Option value={false}>普通</Option>
-      <Option value={true}>关键</Option>
-    </StyledSelect3>
-
-    <StyledInput bordered={false} placeholder={'请输入步骤内容'} suffix={<Button type={'link'} icon={
-      <Popover  onChange = {(e:any)=> console.log(e)}>
-        <ContainerFilled  style={{color:'#6871FC'}}/>
-      </Popover>
-    }/>}/>
+    <StyleFormItem name={[props.id,'index']}>
+      <StyledSelect  suffixIcon={<CaretDownOutlined style={{color:'#fff'}}/>} defaultValue ={1}>
+        {gen().map(item => item)}
+      </StyledSelect>
+    </StyleFormItem>
+    <StyleFormItem name={[props.id,'phase']}>
+      <StyledSelect2  suffixIcon={<CaretDownOutlined/>} defaultValue ={steps[0].name}>
+        {steps.map((item,index) => {
+          return(<Option value={item.name}>{`阶段${index+1}`}</Option>)
+        })}
+      </StyledSelect2>
+    </StyleFormItem>
+    <StyleFormItem name={[props.id,'isCritical']}>
+      <StyledSelect3  suffixIcon={<CaretDownOutlined/>} defaultValue ={false}>
+        <Option value={false}>普通</Option>
+        <Option value={true}>关键</Option>
+      </StyledSelect3>
+    </StyleFormItem>
+    <StyleFormItem name={[props.id,'contents']}>
+      <StyledInput bordered={false} placeholder={'请输入步骤内容'} suffix={<Button type={'link'} icon={
+        <Popover  onChange = {(e:any)=> {
+          setTaskCnt(Object.values(e).length)
+          f[0].setFieldsValue({
+            [props.id]:e
+          })
+        }}>
+          {taskCnt === 0?<ContainerFilled  style={{color:'#6871FC'}}/>:<Count>{taskCnt}</Count>}
+        </Popover>
+      }/>}/>
+    </StyleFormItem>
     </ProcedureWrapper>
   )
 }
@@ -198,7 +226,7 @@ height: 100%;
 overflow: auto;
 flex-wrap: wrap;
 `
-const Create:FunctionComponent<{label:string;phase:Array<{name:string,status:StepStatus,id?:string}>;roles:Array<{name:string,id:string}>}> = (props) => {
+const Create:FunctionComponent<{form:ReturnType<typeof Form.useForm>;label:string;phase:Array<{name:string,status:StepStatus,id?:string}>;roles:Array<{name:string,id:string}>}> = (props) => {
   const [prc,setPrc] = React.useState<any>()
   return (<CreateWrapper>
       <RoleWrapper>
@@ -207,20 +235,21 @@ const Create:FunctionComponent<{label:string;phase:Array<{name:string,status:Ste
           <Button style={{marginLeft:'auto'}} type="link" onClick={React.useCallback(()=>{
             setPrc(content => {
               if(!content){
-                return [<Procedure/>]
+                return [<Procedure form={props.form}id= {0}/>]
               }else{
-                return [...content,<Procedure/>]
+                return [...content,<Procedure form= {props.form}id= {content.length}/>]
               }
 
             })
           },[])}>+步骤</Button>
         </RoleHeader>
+        <StyleFormItem name={[props.label,'roleId']}>
         <Select   suffixIcon={<CaretDownOutlined />}>
           {props.roles.map(role =>{
             return <Option value={role.id}>{role.name}</Option>
           })}
         </Select>
-
+        </StyleFormItem>
 
       </RoleWrapper>
       <DetailsWrapper>
@@ -230,6 +259,13 @@ const Create:FunctionComponent<{label:string;phase:Array<{name:string,status:Ste
       </DetailsWrapper>
     </CreateWrapper>)
 }
+
+
+const Footer = styled.div`
+border-top: 1px solid #979797;
+width:100%;
+height:60px;
+`
 
 const App:FunctionComponent = (props) => {
   const [steps,setSteps] = React.useState([{
@@ -252,16 +288,19 @@ const App:FunctionComponent = (props) => {
     setSteps(arr)
   }
 
-
+  const [form] = Form.useForm()
   return(
     <Main title={'编辑预案模版'}>
+    <Form form={form} style={{display:'contents'}}>
     <Share.Provider value={{steps}}>
+
     <StyledTabPane onChange={callback} type="card">
         <TabPane tab="基础信息" key="1">
 
         </TabPane>
         <TabPane tab="业务信息" key="2">
           <Tag name={'阶段数量'}/>
+          <StyleFormItem name={'phaseNum'}>
           <Select style={{ width: 260,marginBottom:'25px'}} onChange={selectChange} placeholder={'请选择数量'} suffixIcon={<CaretDownOutlined />}>
             <Option value="1">1</Option>
             <Option value="2">2</Option>
@@ -270,22 +309,29 @@ const App:FunctionComponent = (props) => {
             <Option value="5">5</Option>
             <Option value="6">6</Option>
           </Select>
+          </StyleFormItem>
           <Tag name={'阶段名称'} subTitle = {' 支持中英文、数字、和特殊字符 - _() ，长度4~20，中文算两个字符 必须以中文、英文或数字开头'}/>
           <StepBar steps = {steps} onChange = {(val)=>{
               console.log(val)
             }}/>
           <Tag name={'预案角色'}/>
-          <Create phase = {steps} label={'第一角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create phase = {steps} label={'第二角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create phase = {steps} label={'第三角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create phase = {steps} label={'第四角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create phase = {steps} label={'第五角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create phase = {steps} label={'第六角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create phase = {steps} label={'第七角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-
+          <Create form={[form]} phase = {steps} label={'第一角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} label={'第二角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} label={'第三角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} label={'第四角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} label={'第五角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} label={'第六角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} label={'第七角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Footer>
+            <Button onClick={()=>{
+              console.log(form.getFieldsValue())
+            }}>保存</Button>
+          </Footer>
         </TabPane>
       </StyledTabPane>
       </Share.Provider>
+      </Form>
+
     </Main>
   )
 
