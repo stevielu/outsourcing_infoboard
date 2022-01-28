@@ -227,32 +227,41 @@ height: 100%;
 overflow: auto;
 flex-wrap: wrap;
 `
+
+const Roles:FunctionComponent<{form:ReturnType<typeof Form.useForm>;label:string;phase:Array<{name:string,status:StepStatus,id?:string}>;roles:Array<{name:string,id:string}>;onClick:()=>void}> = (props)=>{
+  const [val,setVal] = React.useState('')
+  return (
+    <RoleWrapper>
+      <RoleHeader>
+        <RoleLabel>{props.label}</RoleLabel>
+        <Button style={{marginLeft:'auto'}} type="link" onClick={props.onClick}>+步骤</Button>
+      </RoleHeader>
+      <StyleFormItem name={[props.label,'roleId']} initialValue = {props.roles[0]}>
+      <Select   suffixIcon={<CaretDownOutlined />} value = {val} onChange = {setVal} defaultActiveFirstOption = {true}>
+        {props.roles.map(role =>{
+          return <Option value={role.id}>{role.name}</Option>
+        })}
+      </Select>
+      </StyleFormItem>
+
+    </RoleWrapper>
+  )
+}
 const Create:FunctionComponent<{form:ReturnType<typeof Form.useForm>;label:string;phase:Array<{name:string,status:StepStatus,id?:string}>;roles:Array<{name:string,id:string}>}> = (props) => {
   const [prc,setPrc] = React.useState<any>()
+  const add = React.useCallback(()=>{
+    setPrc(content => {
+      if(!content){
+        return [<Procedure form={props.form} role = {props.label} index= {0}/>]
+      }else{
+        return [...content,<Procedure form= {props.form} role = {props.label} index= {content.length}/>]
+      }
+
+    })
+  },[])
+
   return (<CreateWrapper>
-      <RoleWrapper>
-        <RoleHeader>
-          <RoleLabel>{props.label}</RoleLabel>
-          <Button style={{marginLeft:'auto'}} type="link" onClick={React.useCallback(()=>{
-            setPrc(content => {
-              if(!content){
-                return [<Procedure form={props.form} role = {props.label} id= {0}/>]
-              }else{
-                return [...content,<Procedure form= {props.form} role = {props.label} id= {content.length}/>]
-              }
-
-            })
-          },[])}>+步骤</Button>
-        </RoleHeader>
-        <StyleFormItem name={[props.label,'roleId']}>
-        <Select   suffixIcon={<CaretDownOutlined />}>
-          {props.roles.map(role =>{
-            return <Option value={role.id}>{role.name}</Option>
-          })}
-        </Select>
-        </StyleFormItem>
-
-      </RoleWrapper>
+      <Roles {...props} onClick={add}/>
       <DetailsWrapper>
         {prc && prc.map(item => {
           return item
@@ -263,11 +272,23 @@ const Create:FunctionComponent<{form:ReturnType<typeof Form.useForm>;label:strin
 
 
 const Footer = styled.div`
-border-top: 1px solid #979797;
+border-top: 1px solid #ededed;
 width:100%;
 height:60px;
 `
-
+const SaveButton = styled(Button)`
+width: 150px;
+height: 40px;
+background: #1845FF;
+border-radius: 6px;
+color:#fff;
+margin-top:10px;
+&:focus{
+  background: #1845FF !important;
+  border-color:#1845FF !important;
+  color:#fff;
+}
+`
 const App:FunctionComponent = (props) => {
   const [steps,setSteps] = React.useState([{
       name:'第一阶段',
@@ -301,7 +322,7 @@ const App:FunctionComponent = (props) => {
         </TabPane>
         <TabPane tab="业务信息" key="2">
           <Tag name={'阶段数量'}/>
-          <StyleFormItem name={'phaseNum'}>
+          <StyleFormItem name={'phaseNum'} initialValue={0}>
           <Select style={{ width: 260,marginBottom:'25px'}} onChange={selectChange} placeholder={'请选择数量'} suffixIcon={<CaretDownOutlined />}>
             <Option value="1">1</Option>
             <Option value="2">2</Option>
@@ -312,7 +333,7 @@ const App:FunctionComponent = (props) => {
           </Select>
           </StyleFormItem>
           <Tag name={'阶段名称'} subTitle = {' 支持中英文、数字、和特殊字符 - _() ，长度4~20，中文算两个字符 必须以中文、英文或数字开头'}/>
-          <StyleFormItem name={'stages'}>
+          <StyleFormItem name={'stages'} >
           <StepBar steps = {steps} onChange = {(val)=>{
               form.setFieldsValue({stages:val})
             }}/>
@@ -326,9 +347,9 @@ const App:FunctionComponent = (props) => {
           <Create form={[form]} phase = {steps} label={'第六角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
           <Create form={[form]} phase = {steps} label={'第七角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
           <Footer>
-            <Button onClick={()=>{
+            <SaveButton onClick={()=>{
               console.log(form.getFieldsValue())
-            }}>保存</Button>
+            }}>保存</SaveButton>
           </Footer>
         </TabPane>
       </StyledTabPane>

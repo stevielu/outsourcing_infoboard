@@ -4,7 +4,7 @@ Copyright (c) 2021 by Stevie. All Rights Reserved.
 
 import React,{FunctionComponent,memo} from 'react';
 import { Select,Button,Input,Form} from 'antd';
-import {CaretDownOutlined,ContainerFilled} from '@ant-design/icons'
+import {CaretDownOutlined,CloseCircleFilled,ContainerFilled} from '@ant-design/icons'
 import {Share} from './Template'
 import Popover from './Popover'
 import styled from 'styled-components';
@@ -26,10 +26,11 @@ align-items: center;
 border-radius: 3px;
 margin: 8px;
 outline: 1px solid #CBCBCB;
+position:relative;
 `
 
 const StyledSelect = styled(Select)`
-  width:55px;
+  min-width:55px;
   height:32px;
  .ant-select-selector{
     color: #fff;
@@ -80,53 +81,65 @@ background:#6871FC;
 const StyleFormItem = styled(Form.Item)`
 margin-bottom:0;
 `
-const Procedure:FunctionComponent<{role:string,id:number|string,form:ReturnType<typeof Form.useForm>}> = (props) => {
+
+const DeleteBtn = styled(Button)`
+position:absolute;
+top: -15px;
+right: -15px;
+`
+const Procedure:FunctionComponent<{isEditing:boolean,role:string,index:number,id?:number|string,form:ReturnType<typeof Form.useForm>}> = (props) => {
   const [taskCnt,setTaskCnt] = React.useState(0)
+  const [visible,setVisible] = React.useState(true)
   const [f] = props.form
 
   const gen = ()=>{
     let arrs:Array<JSX.Element> = []
-    for(let i =1;i<=99;i++){
+    for(let i =0;i<=99;i++){
       arrs.push( <Option value={i}>{i}</Option>)
     }
     return arrs
   }
   const {steps} = React.useContext(Share)
+  const id = props.id?props.id:props.index
   return(
+    <div>
+    {visible === true &&
     <ProcedureWrapper>
-    <StyleFormItem name={[props.role,props.id,'index']}>
-      <StyledSelect  suffixIcon={<CaretDownOutlined style={{color:'#fff'}}/>} defaultValue ={1}>
-        {gen().map(item => item)}
-      </StyledSelect>
-    </StyleFormItem>
-    <StyleFormItem name={[props.role,props.id,'phase']}>
-      <StyledSelect2  suffixIcon={<CaretDownOutlined/>} defaultValue ={steps[0].name}>
-        {steps.map((item,index) => {
-          return(<Option value={item.name}>{`阶段${index+1}`}</Option>)
-        })}
-      </StyledSelect2>
-    </StyleFormItem>
-    <StyleFormItem name={[props.role,props.id,'isCritical']}>
-      <StyledSelect3  suffixIcon={<CaretDownOutlined/>} defaultValue ={false}>
-        <Option value={false}>普通</Option>
-        <Option value={true}>关键</Option>
-      </StyledSelect3>
-    </StyleFormItem>
-    <StyleFormItem name={[props.role,props.id,'contents']}>
-      <StyledInput bordered={false} placeholder={'请输入步骤内容'} suffix={<Button type={'link'} icon={
-          <StyleFormItem name={[props.role,props.id,'tasks']}>
-        <Popover  onChange = {(e:any)=> {
-          setTaskCnt(Object.values(e).length)
-          f.setFieldsValue({
-            tasks:e
-          })
-        }}>
-          {taskCnt === 0?<ContainerFilled  style={{color:'#6871FC'}}/>:<Count>{taskCnt}</Count>}
-        </Popover>
-        </StyleFormItem>
-      }/>}/>
-    </StyleFormItem>
-    </ProcedureWrapper>
+      {props.isEditing === true && <DeleteBtn type='link' icon={<CloseCircleFilled style={{color:'red'}}/>} onClick={() => setVisible(false)}/>}
+      <StyleFormItem name={[props.role,id,'index']} initialValue = {props.index}>
+        <StyledSelect  suffixIcon={<CaretDownOutlined style={{color:'#fff'}}/>}>
+          {gen().map(item => item)}
+        </StyledSelect>
+      </StyleFormItem>
+      <StyleFormItem name={[props.role,id,'phase']} initialValue = {steps[0].name}>
+        <StyledSelect2  suffixIcon={<CaretDownOutlined/>} defaultValue ={steps[0].name}>
+          {steps.map((item,index) => {
+            return(<Option value={item.name}>{`阶段${index+1}`}</Option>)
+          })}
+        </StyledSelect2>
+      </StyleFormItem>
+      <StyleFormItem name={[props.role,id,'isCritical']} initialValue = {false}>
+        <StyledSelect3  suffixIcon={<CaretDownOutlined/>} defaultValue ={false}>
+          <Option value={false}>普通</Option>
+          <Option value={true}>关键</Option>
+        </StyledSelect3>
+      </StyleFormItem>
+      <StyleFormItem name={[props.role,id,'contents']}>
+        <StyledInput bordered={false} placeholder={'请输入步骤内容'} suffix={<Button type={'link'} icon={
+            <StyleFormItem name={[props.role,id,'tasks']}>
+          <Popover  onChange = {(e:any)=> {
+            setTaskCnt(Object.values(e).length)
+            f.setFieldsValue({
+              tasks:e
+            })
+          }}>
+            {taskCnt === 0?<ContainerFilled  style={{color:'#6871FC'}}/>:<Count>{taskCnt}</Count>}
+          </Popover>
+          </StyleFormItem>
+        }/>}/>
+      </StyleFormItem>
+      </ProcedureWrapper>}
+      </div>
   )
 }
 
