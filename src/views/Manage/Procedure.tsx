@@ -87,7 +87,7 @@ position:absolute;
 top: -15px;
 right: -15px;
 `
-const Procedure:FunctionComponent<{isEditing:boolean,role:string,index:number,id?:number|string,form:ReturnType<typeof Form.useForm>}> = (props) => {
+const Procedure:FunctionComponent<{role:string,index:number,id?:number|string,form:ReturnType<typeof Form.useForm>}> = (props) => {
   const [taskCnt,setTaskCnt] = React.useState(0)
   const [visible,setVisible] = React.useState(true)
   const [f] = props.form
@@ -99,13 +99,14 @@ const Procedure:FunctionComponent<{isEditing:boolean,role:string,index:number,id
     }
     return arrs
   }
-  const {steps} = React.useContext(Share)
+  const {steps,showDelete} = React.useContext(Share)
   const id = props.id?props.id:props.index
+
   return(
     <div>
     {visible === true &&
     <ProcedureWrapper>
-      {props.isEditing === true && <DeleteBtn type='link' icon={<CloseCircleFilled style={{color:'red'}}/>} onClick={() => setVisible(false)}/>}
+      {showDelete[props.role] === true && <DeleteBtn type='link' icon={<CloseCircleFilled style={{color:'red'}}/>} onClick={() => setVisible(false)}/>}
       <StyleFormItem name={[props.role,id,'index']} initialValue = {props.index}>
         <StyledSelect  suffixIcon={<CaretDownOutlined style={{color:'#fff'}}/>}>
           {gen().map(item => item)}

@@ -4,6 +4,7 @@ Copyright (c) 2020 by Stevie. All Rights Reserved.
 import Home from '../Home'
 import Board from '../Board'
 import Template from '../Manage/Template'
+import TemplateList from '../Manage/TemplateList'
 import manage_ico from '../../assets/menu/manage.svg'
 import config_ico from '../../assets/menu/config.svg'
 
@@ -40,7 +41,15 @@ export default [
         pathname: 'template',
         displayName: '预案模版管理',
         icon: '',
-        content:Template
+        content:TemplateList,
+        subMenu:[
+          {
+            pathname: 'create',
+            displayName: '创建项目',
+            icon: '',
+            content: Template,
+          },
+        ]
       },
 
     ]

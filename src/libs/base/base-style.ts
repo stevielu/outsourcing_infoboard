@@ -171,7 +171,21 @@ export const PrimaryButton = styled(Button).attrs(props => ({
   type:'primary',
 }))`
 `;
-
+export const ActionButton = styled(Button).attrs(props => ({
+  type:'primary',
+}))`
+width: 150px;
+height: 40px;
+background: #1845FF;
+border-radius: 6px;
+color:#fff;
+margin-top:10px;
+&:focus{
+  background: #1845FF !important;
+  border-color:#1845FF !important;
+  color:#fff;
+}
+`;
 export const SecondaryButton = styled(Button).attrs(props => ({
   type:'default',
 }))`

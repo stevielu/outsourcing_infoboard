@@ -65,6 +65,11 @@ const StyledInput = styled(Input)`
   border-radius: 4px;
   color:#fff;
 `
+const Tips = styled.p`
+  max-width:200px;
+  margin-top:10px;
+  color:#423D5F;
+`
 export enum StepStatus{
   Done = '0',
   Progressing = '1',
@@ -78,6 +83,29 @@ export type Steps = {
 type Props = {
   steps:Steps
   onChange?:(value:Steps)=>void
+}
+
+const bgColor = (sta:StepStatus) => {
+  switch(sta){
+    case StepStatus.Ready:
+      return {background:"#423D5F"}
+    case StepStatus.Done:
+      return {background:"#5A76FF"}
+    case StepStatus.Progressing:
+      return {background:"#E7980C"}
+    default:return {background:"#423D5F"}
+  }
+}
+const font = (sta:StepStatus) => {
+  switch(sta){
+    case StepStatus.Ready:
+      return {content:'未開始',color:"#7C7799"}
+    case StepStatus.Done:
+      return {content:'已完成',color:"#5A76FF"}
+    case StepStatus.Progressing:
+      return {content:'處理中',color:"#E7980C"}
+    default:return {content:'未開始',color:"#7C7799"}
+  }
 }
 const App:FunctionComponent<Props> = (props) => {
   const [form] = Form.useForm()
@@ -102,6 +130,7 @@ const App:FunctionComponent<Props> = (props) => {
   },[stepMemp])
 
 
+
   return(
     <Wrapper>
       <Form style={{display: 'contents'}} form={form}>
@@ -109,11 +138,14 @@ const App:FunctionComponent<Props> = (props) => {
         return (
           <Item>
             <Name>{item.name}</Name>
-            {props.steps.length === 1? <Circle/>:<HinterWrapper><Bar style={{background:`${index===0?"transparent":" #676282"}`}}/>  <Circle/><Bar style={{background:`${index===props.steps.length-1?"transparent":" #676282"}`}}/></HinterWrapper>
+            {props.steps.length === 1? <Circle style={bgColor(item.status)}/>:<HinterWrapper><Bar style={{background:`${index===0?"transparent":" #676282"}`}}/>  <Circle style={bgColor(item.status)}/><Bar style={{background:`${index===props.steps.length-1?"transparent":" #676282"}`}}/></HinterWrapper>
 }
-            <Form.Item style={{display: 'flex'}} name={item.name}>
+            {props.onChange ? <Form.Item style={{display: 'flex'}} name={item.name}>
               <StyledInput id = {item.name} key={item.name} minLength = {4} maxLength={20} onChange={changeFn}/>
-            </Form.Item>
+
+            </Form.Item>:<Tips style={{color:font(item.status).color}}>{font(item.status).content}</Tips>
+            }
+
           </Item>
 
         )

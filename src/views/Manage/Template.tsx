@@ -3,12 +3,14 @@ Copyright (c) 2021 by Stevie. All Rights Reserved.
 */
 
 import React,{FunctionComponent,memo} from 'react';
-import { Tabs,Select,Button,Input,Form} from 'antd';
-import {CaretDownOutlined,ContainerFilled} from '@ant-design/icons'
+import { Tabs,Select,Button,Form,Input} from 'antd';
+import {CaretDownOutlined} from '@ant-design/icons'
 import Main from '../Components/Main'
+import {BackButton} from '../Components/'
+
 import StepBar,{StepStatus} from '../Components/StepBar'
 import Procedure from './Procedure'
-import Popover from './Popover'
+import Basic,{CreateBasic} from './Basic'
 import styled from 'styled-components';
 
 const { TabPane } = Tabs;
@@ -60,7 +62,7 @@ const SubTitle = styled.p`
   padding-left:45px;
   margin:0;
 `
-const Tag:FunctionComponent<{name:string,subTitle?:string}> = (props) => {
+export const Tag:FunctionComponent<{name:string,subTitle?:string}> = (props) => {
   return(
     <Wrapper>
       <Title>{props.name}</Title>
@@ -217,6 +219,7 @@ color: #333333;
 text-align: center;
 font-weight: 600;
 margin:0;
+min-width:56px;
 `
 const DetailsWrapper = styled.div`
 display:flex;
@@ -228,13 +231,27 @@ overflow: auto;
 flex-wrap: wrap;
 `
 
-const Roles:FunctionComponent<{form:ReturnType<typeof Form.useForm>;label:string;phase:Array<{name:string,status:StepStatus,id?:string}>;roles:Array<{name:string,id:string}>;onClick:()=>void}> = (props)=>{
+const Roles:FunctionComponent<{
+  form:ReturnType<typeof Form.useForm>;
+  label:string;
+  phase:Array<{name:string,status:StepStatus,id?:string}>;
+  roles:Array<{name:string,id:string}>;
+  onClick:()=>void;
+}> = (props)=>{
   const [val,setVal] = React.useState('')
+  const {setShowDelete} = React.useContext(Share)
+  const onChange = ()=>{
+    setShowDelete(item => {
+      item[props.label] = !item[props.label]
+      return {...item}
+    })
+  }
   return (
     <RoleWrapper>
       <RoleHeader>
         <RoleLabel>{props.label}</RoleLabel>
-        <Button style={{marginLeft:'auto'}} type="link" onClick={props.onClick}>+步骤</Button>
+        <Button style={{marginLeft:'auto',padding:'0'}} type="link" onClick = {props.onClick}>+步骤</Button>
+        <Button  style={{marginLeft:'auto',padding:'0'}} type="link" onClick = {onChange}>-删除</Button>
       </RoleHeader>
       <StyleFormItem name={[props.label,'roleId']} initialValue = {props.roles[0]}>
       <Select   suffixIcon={<CaretDownOutlined />} value = {val} onChange = {setVal} defaultActiveFirstOption = {true}>
@@ -249,19 +266,22 @@ const Roles:FunctionComponent<{form:ReturnType<typeof Form.useForm>;label:string
 }
 const Create:FunctionComponent<{form:ReturnType<typeof Form.useForm>;label:string;phase:Array<{name:string,status:StepStatus,id?:string}>;roles:Array<{name:string,id:string}>}> = (props) => {
   const [prc,setPrc] = React.useState<any>()
+
+
   const add = React.useCallback(()=>{
     setPrc(content => {
       if(!content){
         return [<Procedure form={props.form} role = {props.label} index= {0}/>]
       }else{
-        return [...content,<Procedure form= {props.form} role = {props.label} index= {content.length}/>]
+        return [...content,<Procedure form= {props.form} role = {props.label} index= {content.length} />]
       }
 
     })
   },[])
 
+
   return (<CreateWrapper>
-      <Roles {...props} onClick={add}/>
+      <Roles {...props} onClick = {add}/>
       <DetailsWrapper>
         {prc && prc.map(item => {
           return item
@@ -294,7 +314,15 @@ const App:FunctionComponent = (props) => {
       name:'第一阶段',
       status:StepStatus.Ready
     }])
-
+  const [showDelete,setShowDelete] =  React.useState({
+    '第一角色':false,
+    '第二角色':false,
+    '第三角色':false,
+    '第四角色':false,
+    '第五角色':false,
+    '第六角色':false,
+    '第七角色':false,
+  })
   const  callback = (key)=>{
     console.log(key);
   }
@@ -310,15 +338,26 @@ const App:FunctionComponent = (props) => {
     setSteps(arr)
   }
 
+  const basic = {
+    planNum:'VLN1209102',
+    name:'机场人质劫持预案',
+    desc:'机场人质劫持预案处置劫持人质恐怖事件预案为及时、妥善处置各类特大暴力劫持人质案件,结合我 大队实际,特制定本预案。一、指导思想 在旗局的统一领导下,组织协调全大队警力、装备,统 一指挥'
+  }
   const [form] = Form.useForm()
   return(
-    <Main title={'编辑预案模版'}>
+    <Main title={<BackButton href='/manage/template' title='编辑预案模版'/>}>
     <Form form={form} style={{display:'contents'}}>
-    <Share.Provider value={{steps}}>
+    <Share.Provider value={{steps,showDelete,setShowDelete}}>
 
     <StyledTabPane onChange={callback} type="card">
         <TabPane tab="基础信息" key="1">
 
+          <CreateBasic form={[form]}/>
+          <Footer>
+            <SaveButton onClick={()=>{
+              console.log(form.getFieldsValue())
+            }}>保存</SaveButton>
+          </Footer>
         </TabPane>
         <TabPane tab="业务信息" key="2">
           <Tag name={'阶段数量'}/>
