@@ -24,8 +24,8 @@ export default [
         content:Board
       },
       {
-        pathname: 'test',
-        displayName: '处置行动数据管理',
+        pathname: 'run',
+        displayName: '运行处置行动',
         icon: '',
         content:Home
       },

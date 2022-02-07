@@ -20,6 +20,7 @@ export type ProcedureProps = {
 const Tally = styled(ContentFont)`
   margin-left:auto;
   color:white;
+  display:flex;
 `
 const Header = styled(Container)`
   display:flex;

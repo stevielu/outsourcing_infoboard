@@ -1,0 +1,17 @@
+.styledModal .ant-modal-content{
+  border-radius: 12px;
+}
+.styledModal .ant-modal-content .ant-modal-header{
+  height: 50px;
+background: #393550;
+border-radius: 8px 8px 0px 0px;
+
+}
+.styledModal .ant-modal-content .ant-modal-header .ant-modal-title{
+  font-size: 16px;
+  color: #FFFFFF;
+}
+
+.styledModal .ant-modal-content .ant-modal-footer{
+  border:none;
+}

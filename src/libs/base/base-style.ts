@@ -15,7 +15,7 @@ export const gold = '#DAA520'
 
 /*blue*/
 export const blue = '#558AFA'
-export const maya = '#718CCF'
+export const maya = '#2701FF'
 /*green*/
 export const green = '#32C50B'
 
@@ -197,6 +197,9 @@ export const LinkButton = styled(Button).attrs(props => ({
   padding:0 !important;
   color:${props => props.theme.color.maya};
   font-size: ${props => props.theme.fontSize} !important;
+  &:focus{
+    color: ${props => props.theme.color.maya};
+  }
 `;
 
 export const IconButton = styled(Button).attrs(props => ({

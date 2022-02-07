@@ -1,1 +1,4 @@
 @import '~antd/dist/antd.css';
+.ant-checkbox-indeterminate .ant-checkbox-inner::after{
+  background-color: #6231d3;
+}

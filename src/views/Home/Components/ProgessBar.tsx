@@ -18,7 +18,7 @@ const Step = styled(Container)`
   display: flex;
   flex-direction: row;
   align-items: center;
-
+  margin-bottom:5px;
 `
 const CompleteBar = styled(Container)`
   background:#6871FC;

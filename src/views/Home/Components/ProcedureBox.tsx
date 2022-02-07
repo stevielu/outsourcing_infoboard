@@ -46,10 +46,9 @@ const TagColor = {
 }
 const Box = styled(Container)`
   max-width:228px;
+  min-width:194px;
   height:60px;
   border-radius:3px;
-  margin-right:6px;
-  margin-top:6px;
   display: flex;
   align-items: center;
   flex-direction:row;
@@ -65,6 +64,7 @@ const Content = styled(ContentFont)`
   -webkit-box-orient: vertical;
   overflow: hidden;
   padding-left: 5px;
+  font-size:0.37vw;
 `
 const Pid = styled(Container)`
   display: flex;
