@@ -3,6 +3,8 @@ Copyright (c) 2020 by Stevie. All Rights Reserved.
 */
 import Home from '../Home'
 import Board from '../Board'
+import Documents from '../Documents'
+import Department from '../User'
 import Template from '../Manage/Template'
 import TemplateList from '../Manage/TemplateList'
 import manage_ico from '../../assets/menu/manage.svg'
@@ -29,6 +31,12 @@ export default [
         icon: '',
         content:Home
       },
+      {
+        pathname: 'doc',
+        displayName: '文档管理',
+        icon: '',
+        content:Documents
+      },
     ]
 
   },
@@ -51,7 +59,12 @@ export default [
           },
         ]
       },
-
+      {
+        pathname: 'dept',
+        displayName: '人员管理',
+        icon: '',
+        content:Department
+      },
     ]
 
   },

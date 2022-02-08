@@ -196,7 +196,7 @@ export const LinkButton = styled(Button).attrs(props => ({
 }))`
   padding:0 !important;
   color:${props => props.theme.color.maya};
-  font-size: ${props => props.theme.fontSize} !important;
+  font-size: 0.5vw !important;
   &:focus{
     color: ${props => props.theme.color.maya};
   }
