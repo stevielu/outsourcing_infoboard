@@ -139,6 +139,21 @@ class Network implements NetworkApi {
     return response
   }
 
+  public delete<T>(path:string,params?:object){
+    const response = new NetworkPromise<T>((reslove,reject)=>{
+      AxiosClient.delete<BasicResponse<T>>(path,params)
+      .then(res => {
+        reslove(this.handleRsponse<T>(res))
+      })
+      .catch(err => {
+        if(this.handleError(err) === false){
+          reject(new Error(`${path}:${err.message}`))
+        }
+      })
+    })
+
+    return response
+  }
 
   public postItem<T>(path: string, params?: any){
     return this.post<T>(this.domain + path,params)
@@ -165,7 +180,7 @@ class Network implements NetworkApi {
 
   //删除数据
   public delItem<T>(path: string, params?: any) {
-    return this.post<T>(this.domain + path,params)
+    return this.delete<T>(this.domain + path,params)
   }
 
   //下载文件

@@ -119,6 +119,7 @@ export const usePolly = <T>(
 export const useRequest =   <T>(
   apiService:ApiServiceType<T>,
   deps?: DependencyList,
+  delay?:number,
   config?:{
     useStore:boolean,
     keyPath:string
@@ -158,5 +159,17 @@ export const useRequest =   <T>(
       return {result:res,error:err}
   }
 
-  return {request,data,loading,error}
+  useEffect(()=>{
+    if(delay){
+      setTimeout(()=>{request()},delay)
+    }
+  },[])
+
+  useEffect(()=>{
+    if(!delay){
+      request()
+    }
+  },[deps])
+
+  return {request,data,setData,loading,error}
 }

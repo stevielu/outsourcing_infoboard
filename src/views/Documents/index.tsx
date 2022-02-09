@@ -66,6 +66,9 @@ const Update = (props:{datasource:{name:string;notes:string};visible:boolean;clo
   const send = ()=>{
     console.log(form.getFieldsValue())
   }
+  React.useEffect(()=>{
+    form.setFieldsValue({...props.datasource})
+  },[props.datasource])
   return <Modal title={'编辑文档'} visible= {props.visible} close = {props.closeModal} ok={send}>
   <StyledForm form={form} layout={'vertical'}>
     <StyleFormItem name={'name'} label={'文档名词'} required initialValue = {props.datasource.name}>

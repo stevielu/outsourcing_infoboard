@@ -36,7 +36,6 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-lodash": "^6.0.0",
     "flv.js": "^1.5.0",
-    "html2canvas": "^1.1.4",
     "husky": "^3.0.9",
     "jspdf": "^2.3.1",
     "konva": "^8.1.1",

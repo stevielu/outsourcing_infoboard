@@ -7,7 +7,7 @@ enum ServiceType{
   S1 = 'M_SOCKET1',
 }
 
-export let baseURL = '/airport/coordecision/'
+export let baseURL = '/api/'
 export default class NetworkFactory{
   private domain:any
   constructor(){
@@ -18,20 +18,20 @@ export default class NetworkFactory{
     if(process.env.REACT_APP_ENVIRONMENT == 'mock'){
       this.domain = {
         main:'/test/',
-        socket:'ws://'+ window.location.host+baseURL
+        // socket:'ws://'+ window.location.host+baseURL
       }
     }else{
       if (env === 'development') {
         this.domain = {
           main:baseURL,
-          socket:'ws://'+ window.location.host+baseURL
+          // socket:'ws://'+ window.location.host+baseURL
         }
       }
       else if (env === 'production') {//
-        baseURL = '/airport/coordecision/'
+        baseURL = '/'
         this.domain = {
           main:baseURL,
-          socket:'ws://'+ window.location.host+baseURL
+          // socket:'ws://'+ window.location.host+baseURL
         }
       }
     }

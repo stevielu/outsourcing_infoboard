@@ -64,7 +64,7 @@ export default {
 	},
   get:<T>(url:string, params?:object) => {
     let value = params
-    let requestPath = url + `?`
+    let requestPath = url
     if(value){
       const item = value as {[name:string]:string}
       //拼接请求参数
@@ -81,11 +81,7 @@ export default {
 	},
 
 	delete: <T>(url:string, params?:object) => {
-    let value = params
-    if(value == null){
-      value = {}
-    }
-    return axios.post<T>(url,value)
+    return axios.delete<T>(url)
     .then(res => res.data)
     .catch(err => err)
 	},
