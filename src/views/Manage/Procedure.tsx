@@ -107,27 +107,27 @@ const Procedure:FunctionComponent<{role:string,index:number,id?:number|string,fo
     {visible === true &&
     <ProcedureWrapper>
       {showDelete[props.role] === true && <DeleteBtn type='link' icon={<CloseCircleFilled style={{color:'red'}}/>} onClick={() => setVisible(false)}/>}
-      <StyleFormItem name={[props.role,id,'index']} initialValue = {props.index}>
+      <StyleFormItem name={['roles',id,'steps','index']} initialValue = {props.index}>
         <StyledSelect  suffixIcon={<CaretDownOutlined style={{color:'#fff'}}/>}>
           {gen().map(item => item)}
         </StyledSelect>
       </StyleFormItem>
-      <StyleFormItem name={[props.role,id,'phase']} initialValue = {steps[0].name}>
+      <StyleFormItem name={['roles',id,'steps','phase']} initialValue = {steps[0].name}>
         <StyledSelect2  suffixIcon={<CaretDownOutlined/>} defaultValue ={steps[0].name}>
           {steps.map((item,index) => {
             return(<Option value={item.name}>{`阶段${index+1}`}</Option>)
           })}
         </StyledSelect2>
       </StyleFormItem>
-      <StyleFormItem name={[props.role,id,'isCritical']} initialValue = {false}>
+      <StyleFormItem name={['roles',id,'steps','isCritical']} initialValue = {false}>
         <StyledSelect3  suffixIcon={<CaretDownOutlined/>} defaultValue ={false}>
           <Option value={false}>普通</Option>
           <Option value={true}>关键</Option>
         </StyledSelect3>
       </StyleFormItem>
-      <StyleFormItem name={[props.role,id,'contents']}>
+      <StyleFormItem name={['roles',id,'steps','contents']}>
         <StyledInput bordered={false} placeholder={'请输入步骤内容'} suffix={<Button type={'link'} icon={
-            <StyleFormItem name={[props.role,id,'tasks']}>
+            <StyleFormItem name={['roles',id,'steps','tasks']}>
           <Popover  onChange = {(e:any)=> {
             setTaskCnt(Object.values(e).length)
             f.setFieldsValue({

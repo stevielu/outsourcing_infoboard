@@ -234,6 +234,7 @@ flex-wrap: wrap;
 const Roles:FunctionComponent<{
   form:ReturnType<typeof Form.useForm>;
   label:string;
+  roleId:number|string;
   phase:Array<{name:string,status:StepStatus,id?:string}>;
   roles:Array<{name:string,id:string}>;
   onClick:()=>void;
@@ -253,7 +254,7 @@ const Roles:FunctionComponent<{
         <Button style={{marginLeft:'auto',padding:'0'}} type="link" onClick = {props.onClick}>+步骤</Button>
         <Button  style={{marginLeft:'auto',padding:'0'}} type="link" onClick = {onChange}>-删除</Button>
       </RoleHeader>
-      <StyleFormItem name={[props.label,'roleId']} initialValue = {props.roles[0]}>
+      <StyleFormItem name={['roles',props.roleId,'userId']}>
       <Select   suffixIcon={<CaretDownOutlined />} value = {val} onChange = {setVal} defaultActiveFirstOption = {true}>
         {props.roles.map(role =>{
           return <Option value={role.id}>{role.name}</Option>
@@ -264,16 +265,16 @@ const Roles:FunctionComponent<{
     </RoleWrapper>
   )
 }
-const Create:FunctionComponent<{form:ReturnType<typeof Form.useForm>;label:string;phase:Array<{name:string,status:StepStatus,id?:string}>;roles:Array<{name:string,id:string}>}> = (props) => {
+const Create:FunctionComponent<{form:ReturnType<typeof Form.useForm>;label:string;roleId:number|string;phase:Array<{name:string,status:StepStatus,id?:string}>;roles:Array<{name:string,id:string}>}> = (props) => {
   const [prc,setPrc] = React.useState<any>()
 
 
   const add = React.useCallback(()=>{
     setPrc(content => {
       if(!content){
-        return [<Procedure form={props.form} role = {props.label} index= {0}/>]
+        return [<Procedure form={props.form} role = {String(props.roleId)} index= {0}/>]
       }else{
-        return [...content,<Procedure form= {props.form} role = {props.label} index= {content.length} />]
+        return [...content,<Procedure form= {props.form} role = {String(props.roleId)} index= {content.length} />]
       }
 
     })
@@ -378,13 +379,13 @@ const App:FunctionComponent = (props) => {
             }}/>
           </StyleFormItem>
           <Tag name={'预案角色'}/>
-          <Create form={[form]} phase = {steps} label={'第一角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create form={[form]} phase = {steps} label={'第二角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create form={[form]} phase = {steps} label={'第三角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create form={[form]} phase = {steps} label={'第四角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create form={[form]} phase = {steps} label={'第五角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create form={[form]} phase = {steps} label={'第六角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
-          <Create form={[form]} phase = {steps} label={'第七角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} roleId = {1} label={'第一角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} roleId = {2} label={'第二角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} roleId = {3} label={'第三角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} roleId = {4} label={'第四角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} roleId = {5}label={'第五角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} roleId = {6} label={'第六角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
+          <Create form={[form]} phase = {steps} roleId = {7} label={'第七角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
           <Footer>
             <SaveButton onClick={()=>{
               console.log(form.getFieldsValue())
