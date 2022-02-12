@@ -12,7 +12,7 @@ import StepBar,{StepStatus} from '../Components/StepBar'
 import Procedure from './Procedure'
 import Basic,{CreateBasic} from './Basic'
 import styled from 'styled-components';
-
+import {map} from 'lodash'
 const { TabPane } = Tabs;
 const { Option } = Select;
 
@@ -246,6 +246,9 @@ const Roles:FunctionComponent<{
       return {...item}
     })
   }
+  React.useEffect(()=>{
+    console.log(val)
+  },[props])
   return (
     <RoleWrapper>
       <RoleHeader>
@@ -253,7 +256,7 @@ const Roles:FunctionComponent<{
         <Button style={{marginLeft:'auto',padding:'0'}} type="link" onClick = {props.onClick}>+步骤</Button>
         <Button  style={{marginLeft:'auto',padding:'0'}} type="link" onClick = {onChange}>-删除</Button>
       </RoleHeader>
-      <StyleFormItem name={[props.label,'roleId']} initialValue = {props.roles[0]}>
+      <StyleFormItem name={[props.label,'userId']} shouldUpdate={(prevValues:any, curValues:any) => prevValues.userId !== curValues.userId}>
       <Select   suffixIcon={<CaretDownOutlined />} value = {val} onChange = {setVal} defaultActiveFirstOption = {true}>
         {props.roles.map(role =>{
           return <Option value={role.id}>{role.name}</Option>
@@ -387,7 +390,30 @@ const App:FunctionComponent = (props) => {
           <Create form={[form]} phase = {steps} label={'第七角色'} roles = {[{name:'王二麻子',id:'1'},{name:'王大麻',id:'2'},{name:'王小麻',id:'3'}]}/>
           <Footer>
             <SaveButton onClick={()=>{
-              console.log(form.getFieldsValue())
+              const allowed = ['phaseNum','planDesc','planName','planNum','stages']
+              const raw = form.getFieldsValue()
+              const filtered = Object.keys(raw).filter(key => !allowed.includes(key)).filter(key => raw[key].userId !== undefined).reduce((obj, key) => {
+                obj[key] = raw[key];
+                return obj;
+              }, {})
+              const val = map(filtered,(item:any,key)=>{
+                const uid = item.userId
+                delete(item.userId)
+                return {steps:Object.values(item),rolesId:key,userId:uid}
+              })
+              let submit = Object.keys(raw).filter(key => allowed.includes(key)).reduce((obj, key) => {
+                obj[key] = raw[key];
+                return obj;
+              }, {})
+
+              submit['roles'] = val.map(child => {
+                 child.steps = child.steps.map((subChild:any) => {
+                  subChild.tasks = Object.values(subChild.tasks)
+                  return subChild
+                })
+                return child
+              })
+              console.log(submit)
             }}>保存</SaveButton>
           </Footer>
         </TabPane>
